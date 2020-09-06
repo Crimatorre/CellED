@@ -16,31 +16,14 @@ namespace CellED.UI.SpriteTools
             WorldObj = worldObj;
         }
 
-        public override void OnMouseLeftClick(float x, float y)
+        public override void OnItemSelection(float x, float y)
         {
-            if (Contains(x, y))
-            {
-                if (parentList.parent.objectHandler.CurrentSelection != null)
-                {
-                    Debug.WriteLine(parentList.parent.objectHandler.CurrentSelection.Name == WorldObj.Name);
-                    if (parentList.parent.objectHandler.CurrentSelection.Name == WorldObj.Name)
-                    {
-                        if (State == ItemState.Selected)
-                        {
-                            parentList.parent.objectHandler.ResetSelection();
-                        }
-                    }
-                    else
-                    {
-                        parentList.parent.objectHandler.AddObjectToWorld(new WorldObject(WorldObj, new Vector2(x, y)));
-                    }
-                }
-                else
-                {
-                    parentList.parent.objectHandler.AddObjectToWorld(new WorldObject(WorldObj, new Vector2(x, y)));
-                }
-            }
-            base.OnMouseLeftClick(x, y);
+            parentList.parent.objectHandler.StartObjectAddition(new WorldObject(WorldObj, new Vector2(x, y) - parentList.parent.camera.CurrentOffset));
+        }
+
+        public override void OnItemDiselection()
+        {
+            parentList.parent.objectHandler.EndObjectAddition();
         }
     }
 }

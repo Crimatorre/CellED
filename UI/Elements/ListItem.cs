@@ -78,24 +78,40 @@ namespace CellED.UI.Elements
             {
                 if (State == ItemState.Selected)
                 {
+                    // disselecting selected item
                     parentList.CurrentSelection = null;
                     State = ItemState.Hovered;
+                    OnItemDiselection();
                 }
                 else
                 {
+                    // reseting state of last clicked item
                     if (parentList.CurrentSelection != null)
                     {
                         parentList.CurrentSelection.State = ItemState.None;
                     }
                     
+                    // adding selection to new item
                     State = ItemState.Selected;
                     parentList.CurrentSelection = this;
+                    OnItemSelection(x, y);
                 }
             }
             else
             {
+                // clicked outside the item
                 State = ItemState.None;
             }
+        }
+
+        public virtual void OnItemSelection(float x, float y)
+        {
+
+        }
+
+        public virtual void OnItemDiselection()
+        {
+            
         }
 
         private void OnMousePosChanged(float x, float y)

@@ -71,10 +71,6 @@ namespace CellED.UI.Elements
             {
                 MouseLeftClickEvent?.Invoke(x, y);
             }
-            else if (CurrentSelection != null)
-            {
-                CurrentSelection.State = ListItem.ItemState.None;
-            }
         }
 
         private bool Contains(float x, float y)

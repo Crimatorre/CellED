@@ -35,27 +35,25 @@ namespace CellED.Core
             WorldObjects = new List<WorldObject>();
         }
 
-        public void AddObjectToWorld(WorldObject worldObj)
+        public void StartObjectAddition(WorldObject worldObj)
         {
-            parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
-            CurrentSelection = worldObj;
             CurrentOperation = ObjectOperation.Placing;
+            CurrentSelection = worldObj;
+            parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
         }
 
-        public void ResetSelection()
+        public void EndObjectAddition()
         {
-            if (CurrentOperation == ObjectOperation.Placing)
-            {
-                CurrentSelection = null;
-                CurrentOperation = ObjectOperation.None;
-            }
+            CurrentOperation = ObjectOperation.None;
+            CurrentSelection = null;
+            parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
         }
 
         private void OnMousePosChanged(float x, float y)
         {
             if (CurrentOperation == ObjectOperation.Placing)
             {
-                CurrentSelection.Pos = new Vector2(x, y);
+                CurrentSelection.Pos = new Vector2(x, y) - parent.camera.CurrentOffset;
             }
             
         }
@@ -66,11 +64,9 @@ namespace CellED.Core
             {
                 if (CurrentOperation == ObjectOperation.Placing)
                 {
-                    CurrentSelection.Pos = new Vector2(x, y);
+                    CurrentSelection.Pos = new Vector2(x, y) - parent.camera.CurrentOffset;
                     WorldObjects.Add(CurrentSelection);
-                    CurrentSelection = null;
-                    CurrentOperation = ObjectOperation.None;
-                    parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
+                    CurrentSelection = new WorldObject(CurrentSelection, CurrentSelection.Pos);
                 }
             }
         }

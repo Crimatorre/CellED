@@ -14,17 +14,7 @@ namespace CellED.Core
 
         public string Name { get; set; }
         public Texture2D Texture { get; set; }
-        public Vector2 Pos
-        {
-            get
-            {
-                return _pos - parent.parent.camera.CurrentOffset;
-            }
-            set
-            {
-                _pos = value;
-            }
-        }
+        public Vector2 Pos { get; set; }
         public Vector2 Origin { get; set; }
         public SpriteEffects Effects { get; set; }
         public float Scale { get; set; }
