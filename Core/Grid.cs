@@ -37,15 +37,6 @@ namespace CellED.Core
         private void InitializeGrid()
         {
             _tileList = new Dictionary<(int, int), Tile>();
-
-            // creating empty tile in the center of a screen
-            /*for (int x = -9; x < 10; x ++)
-            {
-                for (int y = -9; y < 10; y++)
-                {
-                    _tileList.Add(new Tile(this, _game, new Vector2(x, y)));
-                }
-            }*/
             Tile centerTile = new Tile(this, _game, (0, 0));
             _tileList.Add((0, 0), centerTile);
         }

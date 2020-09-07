@@ -40,7 +40,7 @@ namespace CellED.Core
 
         public WorldObject(WorldObject worldObject, Vector2 pos)
         {
-            this.parent = worldObject.parent;
+            parent = worldObject.parent;
             Texture = worldObject.Texture;
             Name = worldObject.Name;
             Pos = pos;
