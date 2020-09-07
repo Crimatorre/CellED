@@ -37,7 +37,8 @@ namespace CellED.Core
 
             // MouseClick / MousePress handling
             if (mouseState.LeftButton == ButtonState.Pressed &&
-                lastMouseState.LeftButton == ButtonState.Released)
+                lastMouseState.LeftButton == ButtonState.Released &&
+                keyboardState.IsKeyUp(Keys.LeftShift))
             {
                 LeftClickEvent?.Invoke(mouseState.X, mouseState.Y);
                 MouseLeftPressedEvent?.Invoke(mouseState.X, mouseState.Y);

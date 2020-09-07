@@ -67,14 +67,14 @@ namespace CellED.UI
         public virtual void GenerateTexture()
         {
             Texture = new Texture2D(parent.GraphicsDevice, Width, Height);
-            Texture.SetData(Utilities.CreateRectangleTexture(Width * Height, Color));
+            Texture.SetData(Utilities.CreateRectangleTexture(Width * Height));
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (!parameters.HasFlag(Parameters.Hidden))
             {
-                spriteBatch.Draw(Texture, Pos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(Texture, Pos, null, Color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0f);
             }
         }
 

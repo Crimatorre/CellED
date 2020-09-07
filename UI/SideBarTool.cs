@@ -19,6 +19,9 @@ namespace CellED.UI
             }
         }
 
+        public delegate void MouseEvent(float x, float y);
+        public event MouseEvent MouseLeftPressed;
+
         public SideBarTool(SideBar sideBar, int height, string name = "Item")
             : base(sideBar.parent, sideBar.Width - sideBar.Padding * 2, height,
                   sideBar.Pos + new Vector2(sideBar.Padding) + sideBar.GetToolOffset(height),
@@ -27,6 +30,13 @@ namespace CellED.UI
             Name = name;
             TextOffset = new Vector2(5, (int)(-TextSize.Y / 2));
             GenerateBorder(1);
+            sideBar.parent.inputHandler.MouseLeftPressedEvent += OnMouseLeftPressed;
+        }
+
+        // passes event further to ui elements 
+        public void OnMouseLeftPressed(float x, float y)
+        {
+            MouseLeftPressed?.Invoke(x, y);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

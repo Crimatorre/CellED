@@ -5,39 +5,97 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace CellED.Core
 {
     public class Grid
     {
+        private float zValue;
+        private bool showOnTop;
+        public enum TileOperation
+        {
+            None,
+            Adding,
+            Removing
+        }
+
         private Texture2D _tileTexture;
         private Texture2D _tileFilledTexture;
         private Texture2D _tileDottedTexture;
         private Dictionary<(int, int),Tile> _tileList;
-        private CellED _game;
+        public CellED parent;
 
         public Vector2 tileSize;
+        public Vector2 screenOffset;
 
         public Vector2 Size { get; set; }
-        public Vector2 screenOffset;
+        public TileOperation CurrentOperation { get; set; }
+        public bool EditModeEnabled { get; set; }
+        public bool GridEnabled { get; set; }
+        public bool ShowOnTop
+        {
+            get
+            {
+                return showOnTop;
+            }
+            set
+            {
+                showOnTop = value;
+                zValue = showOnTop == true ? 0f : 1f;
+            }
+        }
+        
         public Grid(CellED game)
         {
             //Size = new Vector2(xSize, ySize);
             _tileTexture = game.Content.Load<Texture2D>("Textures/tile");
             _tileFilledTexture = game.Content.Load<Texture2D>("Textures/tileFilled");
             _tileDottedTexture = game.Content.Load<Texture2D>("Textures/tileDotted");
-            _game = game;
+            parent = game;
+
+            CurrentOperation = TileOperation.None;
+            GridEnabled = true;
+            EditModeEnabled = true;
+            ShowOnTop = false;
 
             screenOffset = new Vector2(game.ScreenWidth/2, game.ScreenHeight/2);
             tileSize = new Vector2(48, 24);
 
             InitializeGrid();
+            parent.inputHandler.MouseLeftPressedEvent += OnMouseLeftPressed;
+            parent.inputHandler.MouseLeftReleasedEvent += OnMouseLeftReleased;
+        }
+
+        private void OnMouseLeftReleased(float x, float y)
+        {
+            if (EditModeEnabled && GridEnabled)
+            {
+                parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
+            }
+        }
+
+        private void OnMouseLeftPressed(float x, float y)
+        {
+            if (ViewPortContains(x, y))
+            {
+                if (EditModeEnabled && GridEnabled)
+                {
+                    parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
+                    ChangeTileState(x, y);
+                }
+            }
+        }
+
+        private void OnMousePosChanged(float x, float y)
+        {
+            ChangeTileState(x, y);
         }
 
         private void InitializeGrid()
         {
             _tileList = new Dictionary<(int, int), Tile>();
-            Tile centerTile = new Tile(this, _game, (0, 0));
+            Tile centerTile = new Tile(this, parent, (0, 0));
             _tileList.Add((0, 0), centerTile);
         }
 
@@ -74,7 +132,7 @@ namespace CellED.Core
         {
             foreach (KeyValuePair<(int, int), Tile> pair in _tileList)
             {
-                _game.inputHandler.LeftClickEvent -= pair.Value.OnLeftClick;
+                parent.inputHandler.LeftClickEvent -= pair.Value.OnLeftClick;
             }
         }
 
@@ -82,7 +140,7 @@ namespace CellED.Core
         {
             foreach (KeyValuePair<(int, int), Tile> pair in _tileList)
             {
-                _game.inputHandler.LeftClickEvent += pair.Value.OnLeftClick;
+                parent.inputHandler.LeftClickEvent += pair.Value.OnLeftClick;
             }
         }
 
@@ -93,7 +151,7 @@ namespace CellED.Core
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (_game.State.HasFlag(CellED.ProgramState.GridEnabled))
+            if (GridEnabled)
             {
                 foreach (KeyValuePair<(int, int), Tile> pair in _tileList)
                 {
@@ -104,7 +162,7 @@ namespace CellED.Core
                     {
                         tileTexture = _tileDottedTexture;
                     }
-                    spriteBatch.Draw(tileTexture, tilePos, Color.White);
+                    spriteBatch.Draw(tileTexture, tilePos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, zValue);
                 }
             }
         }
@@ -128,6 +186,39 @@ namespace CellED.Core
             float y = isoPos.Y;
             Vector2 cartPos = new Vector2((float)Math.Floor((x + y) * tileSize.X / 2), (float)Math.Floor((y - x) * tileSize.Y / 2));
             return cartPos;
+        }
+
+        public (int X, int Y) Vector2ToTuple(Vector2 xy)
+        {
+            return ((int)xy.X, (int)xy.Y);
+        }
+
+        private void ChangeTileState(float x, float y)
+        {
+            Vector3 cameraPos = parent.camera.CameraPosition.Translation;
+
+            (int X, int Y) isoXY = Vector2ToTuple(CartesianToIso(new Vector2(x - cameraPos.X, y - cameraPos.Y)));
+
+            if (_tileList.ContainsKey(isoXY))
+            {
+                if (_tileList[isoXY].currentState == Tile.State.Border && Keyboard.GetState().IsKeyUp(Keys.LeftAlt))
+                {
+                    _tileList[isoXY].CreateNeighbours();
+                }
+                else if (_tileList[isoXY].currentState == Tile.State.Border && Keyboard.GetState().IsKeyDown(Keys.LeftAlt))
+                {
+                    _tileList[isoXY].ChangeNeighborState();
+                }
+            }
+        }
+
+        private bool ViewPortContains(float x, float y)
+        {
+            if (x > 240 && x < parent.ScreenWidth - 240)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

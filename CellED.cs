@@ -14,7 +14,6 @@ namespace CellED
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private SpriteBatch spriteBatchUI;
-        private Grid grid;
         private UIManager uiManager;
 
         public readonly int ScreenWidth;
@@ -31,6 +30,7 @@ namespace CellED
         public InputHandler inputHandler;
         public Camera camera;
         public ObjectHandler objectHandler;
+        public Grid grid;
 
         public ProgramState State { get; set; }
         public Vector2 Offset { get; private set; }

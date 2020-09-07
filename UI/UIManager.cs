@@ -33,7 +33,7 @@ namespace CellED.UI
 
             SideBar leftSideBar = new SideBar(parent, sideBarWidth, parent.ScreenHeight, Vector2.Zero, parameters, FillColor);
             leftSideBar.AddTool(new TextureCatalog(leftSideBar));
-            leftSideBar.AddTool(new SideBarTool(leftSideBar, 300, "Map Atlas"));
+            leftSideBar.AddTool(new GridTools(leftSideBar));
 
             SideBar rightSideBar = new SideBar(parent, sideBarWidth, parent.ScreenHeight, new Vector2(parent.ScreenWidth - sideBarWidth, 0), parameters, FillColor);
 

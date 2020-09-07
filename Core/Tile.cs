@@ -42,8 +42,6 @@ namespace CellED.Core
             NCoords.Add((-1, 0));
             NCoords.Add((-1, -1));
             NCoords.Add((0, -1));
-
-            game.inputHandler.LeftClickEvent += OnLeftClick;
         }
 
         public void OnLeftClick(float x, float y)
@@ -74,8 +72,9 @@ namespace CellED.Core
             }
         }
 
-        private void CreateNeighbours()
+        public void CreateNeighbours()
         {
+            currentState = State.Floor;
             for (int i = 0; i < (int)NIndex.Count; i++)
             {
                 (int X, int Y) nPos = (Pos.X + NCoords[i].Item1, Pos.Y + NCoords[i].Item2);
@@ -87,7 +86,7 @@ namespace CellED.Core
             }
         }
 
-        private void ChangeNeighborState()
+        public void ChangeNeighborState()
         {
             for (int i = 0; i < (int)NIndex.Count; i++)
             {
@@ -100,6 +99,10 @@ namespace CellED.Core
                         tile.currentState = State.Border;
                     }
                 }
+            }
+            if (_parent.RemoveTileAt(Pos))
+            {
+                _game.inputHandler.LeftClickEvent -= OnLeftClick;
             }
         }
 
