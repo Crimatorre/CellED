@@ -73,7 +73,52 @@ namespace CellED.Core
             return ColorData2Dto1D(colorData2D, width, height); ;
         }
 
-            public static Color[] CreateRectangularBorder(Color[,] colorData2D, int width, int height, int borderWidth, Color borderColor)
+        public static Color[] CreateOutlineTexture(Color[] colorData, int width, int height, int borderWidth)
+        {
+            Color[,] colorData2D = ColorData1Dto2D(colorData, width, height);
+            Color[,] outlinedData = new Color[width, height];
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (colorData2D[x, y] != Color.Transparent)
+                    {
+                        for (int u = -borderWidth; u <= borderWidth; u++)
+                        {
+                            for (int v = -borderWidth; v <= borderWidth; v++)
+                            {
+                                if (u + x >= 0 && u + x < width &&
+                                    v + y >= 0 && v + y < height)
+                                {
+                                    outlinedData[x + u, y + v] = Color.White;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            CutDataFromOther(ref outlinedData, colorData2D, width, height);
+
+            return ColorData2Dto1D(outlinedData, width, height);
+        }
+
+        private static void CutDataFromOther(ref Color[,] outlinedData, Color[,] colorData2D, int width, int height)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (colorData2D[x, y] != Color.Transparent)
+                    {
+                        outlinedData[x, y] = Color.Transparent;
+                    }
+                }
+            }
+        }
+
+        public static Color[] CreateRectangularBorder(Color[,] colorData2D, int width, int height, int borderWidth, Color borderColor)
         {
             for (int x = 0; x < width; x++)
             {

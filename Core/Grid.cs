@@ -56,7 +56,7 @@ namespace CellED.Core
 
             CurrentOperation = TileOperation.None;
             GridEnabled = true;
-            EditModeEnabled = true;
+            EditModeEnabled = false;
             ShowOnTop = false;
 
             screenOffset = new Vector2(game.ScreenWidth/2, game.ScreenHeight/2);

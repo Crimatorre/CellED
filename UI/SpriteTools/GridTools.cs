@@ -54,7 +54,6 @@ namespace CellED.UI.SpriteTools
 
         private void OnGridEditSwitchChanged(bool state)
         {
-            Debug.WriteLine("Edit mode: " + state);
             grid.EditModeEnabled = state;
         }
 
