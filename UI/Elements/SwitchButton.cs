@@ -68,7 +68,7 @@ namespace CellED.UI.Elements
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            spriteBatch.Draw(SliderTexture, SliderPos, parent.TextColor);
+            spriteBatch.Draw(SliderTexture, SliderPos, parent.BaseColorLight);
         }
 
         public override void Update()

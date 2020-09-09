@@ -66,6 +66,10 @@ namespace CellED.Core
                         {
                             colorData2D[x, y] = borderColor;
                         }
+                        else
+                        {
+                            colorData2D[x, y] = Color.Transparent;
+                        }
                     }
                 }
             }

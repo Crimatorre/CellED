@@ -17,14 +17,16 @@ namespace CellED.Core
         }
         public CellED parent;
         public ObjectOperation CurrentOperation;
+        public WorldObject currentSelection;
 
         public List<WorldObject> CatalogObjects { get; set; }
         public List<WorldObject> WorldObjects { get; set; }
-        public WorldObject CurrentSelection { get; set; }
         public WorldObject NewObject { get; set; }
 
-        public delegate void MouseHandler(float x, float y);
-        public event MouseHandler MouseLeftPressed;
+        public delegate void MouseEvent(float x, float y);
+        public delegate void ObjectEvent(ref WorldObject ob);
+        public event MouseEvent MouseLeftPressed;
+        public event ObjectEvent ObjectSelection;
 
         public ObjectHandler(CellED parent)
         {
@@ -43,6 +45,7 @@ namespace CellED.Core
         public void StartObjectAddition(WorldObject worldObj)
         {
             CurrentOperation = ObjectOperation.Placing;
+            currentSelection = null;
             NewObject = worldObj;
             parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
         }
@@ -71,13 +74,13 @@ namespace CellED.Core
                 {
                     NewObject.Pos = new Vector2(x, y) - parent.camera.CurrentOffset;
                     WorldObjects.Add(NewObject);
-                    NewObject.Z += 0.001f;
                     NewObject = new WorldObject(NewObject, NewObject.Pos);
                 }
                 if (CurrentOperation == ObjectOperation.None && !parent.grid.EditModeEnabled)
                 {
-                    CurrentSelection = null;
+                    currentSelection = null;
                     MouseLeftPressed?.Invoke(x, y);
+                    ObjectSelection?.Invoke(ref currentSelection);
                 }
             }
         }

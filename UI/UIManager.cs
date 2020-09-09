@@ -36,6 +36,7 @@ namespace CellED.UI
             leftSideBar.AddTool(new GridTools(leftSideBar));
 
             SideBar rightSideBar = new SideBar(parent, sideBarWidth, parent.ScreenHeight, new Vector2(parent.ScreenWidth - sideBarWidth, 0), parameters, FillColor);
+            rightSideBar.AddTool(new SpriteScale(rightSideBar));
 
             uiObjects.Add(topBar);
             uiObjects.Add(leftSideBar);

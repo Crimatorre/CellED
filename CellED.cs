@@ -21,6 +21,7 @@ namespace CellED
 
         public readonly Color BaseColor;
         public readonly Color BaseColorDark;
+        public readonly Color BaseColorLight;
         public readonly Color SelectionColor;
         public readonly Color HoverColor;
         public readonly Color TextColor;
@@ -56,6 +57,7 @@ namespace CellED
 
             BaseColor = new Color(90, 90, 90);
             BaseColorDark = new Color(70, 70, 70);
+            BaseColorLight = new Color(170, 170, 170);
             SelectionColor = new Color(0, 184, 204);
             HoverColor = new Color(0, 113, 133);
             TextColor = new Color(220, 220, 220);

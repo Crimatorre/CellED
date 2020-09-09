@@ -21,6 +21,8 @@ namespace CellED.UI
 
         public delegate void MouseEvent(float x, float y);
         public event MouseEvent MouseLeftPressed;
+        public event MouseEvent MouseLeftReleased;
+        public event MouseEvent MouseMoved;
 
         public SideBarTool(SideBar sideBar, int height, string name = "Item")
             : base(sideBar.parent, sideBar.Width - sideBar.Padding * 2, height,
@@ -31,12 +33,27 @@ namespace CellED.UI
             TextOffset = new Vector2(5, (int)(-TextSize.Y / 2));
             GenerateBorder(1);
             sideBar.parent.inputHandler.MouseLeftPressedEvent += OnMouseLeftPressed;
+            sideBar.parent.inputHandler.MouseLeftReleasedEvent += OnMouseLeftReleased;
+            sideBar.parent.inputHandler.MouseMovedEvent += OnMouseMoved;
         }
 
-        // passes event further to ui elements 
+        // Event passing further for objects 
+        private void OnMouseMoved(float x, float y)
+        {
+            MouseMoved?.Invoke(x, y);
+        }
+
+        private void OnMouseLeftReleased(float x, float y)
+        {
+            MouseLeftReleased?.Invoke(x, y);
+        }
+         
         public void OnMouseLeftPressed(float x, float y)
         {
-            MouseLeftPressed?.Invoke(x, y);
+            if (Contains(x, y))
+            {
+                MouseLeftPressed?.Invoke(x, y);
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -47,13 +64,19 @@ namespace CellED.UI
 
         public override void GenerateBorder(int borderWidth)
         {
-            if (Texture == null)
-            {
-                Texture = new Texture2D(parent.GraphicsDevice, Width, Height);
-            }
+            Texture = new Texture2D(parent.GraphicsDevice, Width, Height);
             Color[] colorData = new Color[Width * Height];
-            Texture.GetData(colorData);
             Texture.SetData(Utilities.CreateGappedRectangularBorder(colorData, Width, Height, borderWidth, BorderColor, TextSize));
+        }
+
+        private bool Contains(float x, float y)
+        {
+            if (x > Pos.X && x < Pos.X + Width &&
+                y > Pos.Y && y < Pos.Y + Height)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -71,7 +71,7 @@ namespace CellED.Core
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, Pos, null, Color, Rotation, Origin, Scale, Effects, Z);
-            if (parent.CurrentSelection == this)
+            if (parent.currentSelection == this)
             {
                 spriteBatch.Draw(Outline, Pos, null, Color.Yellow, Rotation, Origin, Scale, Effects, 0f);
             }
@@ -81,16 +81,16 @@ namespace CellED.Core
         {
             if (Contains(x, y))
             {
-                if (parent.CurrentSelection != null)
+                if (parent.currentSelection != null)
                 {
-                    if (parent.CurrentSelection.Z > Z)
+                    if (parent.currentSelection.Z > Z)
                     {
-                        parent.CurrentSelection = this;
+                        parent.currentSelection = this;
                     }
                 }
                 else
                 {
-                    parent.CurrentSelection = this;
+                    parent.currentSelection = this;
                 }
             }
         }
