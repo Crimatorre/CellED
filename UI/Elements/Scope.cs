@@ -22,7 +22,7 @@ namespace CellED.UI.Elements
                 _labelText = value;
                 Vector2 textSize = parent.UIFontSmall.MeasureString(_labelText) / 2;
                 textSize.Round();
-                TextOffset = new Vector2(Width / 2, Height / 2) - textSize;
+                TextOffset = new Vector2(Width / 2, Height / 2 + 1) - textSize;
                 TextOffset.Round();
             }
         }

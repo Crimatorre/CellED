@@ -42,6 +42,10 @@ namespace CellED.UI.SpriteTools
             GridEditSwitch.SwitchValueChanged += OnGridEditSwitchChanged;
             GridTopBottomSwitch.SwitchValueChanged += OnGridTopBottomSwitchChanged;
 
+            grid.VisibilityChanged += GridSwitch.OnValueChanged;
+            grid.EditModeChanged += GridEditSwitch.OnValueChanged;
+            grid.ZChanged += GridTopBottomSwitch.OnValueChanged;
+
             MouseLeftPressed += GridSwitch.OnMouseClick;
             MouseLeftPressed += GridEditSwitch.OnMouseClick;
             MouseLeftPressed += GridTopBottomSwitch.OnMouseClick;
@@ -49,17 +53,26 @@ namespace CellED.UI.SpriteTools
 
         private void OnGridTopBottomSwitchChanged(bool state)
         {
-            grid.ShowOnTop = state;
+            if (grid.ShowOnTop != state)
+            {
+                grid.ShowOnTop = state;
+            }
         }
 
         private void OnGridEditSwitchChanged(bool state)
         {
-            grid.EditModeEnabled = state;
+            if (grid.EditModeEnabled != state)
+            {
+                grid.EditModeEnabled = state;
+            }
         }
 
         private void OnGridSwitchChanged(bool state)
         {
-            grid.GridEnabled = state;
+            if (grid.GridEnabled != state)
+            {
+                grid.GridEnabled = state;
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)

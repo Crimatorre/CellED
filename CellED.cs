@@ -88,7 +88,6 @@ namespace CellED
             UIFontSmall = Content.Load<SpriteFont>("Fonts/UIFontSmall");
 
             inputHandler = new InputHandler(this);
-            inputHandler.GTappedEvent += EnableGrid;
 
             objectHandler = new ObjectHandler(this);
 
@@ -131,20 +130,5 @@ namespace CellED
 
             base.Draw(gameTime);
         }
-
-        private void EnableGrid()
-        {
-            if (State.HasFlag(ProgramState.GridEnabled))
-            {
-                State = State & ~ProgramState.GridEnabled;
-                grid.DisableInput();
-            }
-            else
-            {
-                State = State | ProgramState.GridEnabled;
-                grid.EnableInput();
-            }
-        }
-
     }
 }

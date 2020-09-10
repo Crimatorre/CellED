@@ -71,7 +71,11 @@ namespace CellED.Core
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, Pos, null, Color, Rotation, Origin, Scale, Effects, Z);
-            if (parent.currentSelection == this)
+            if (parent.currentSelection == this && parent.CurrentOperation == ObjectHandler.ObjectOperation.Placing)
+            {
+                spriteBatch.Draw(Outline, Pos, null, Color.Orange, Rotation, Origin, Scale, Effects, 0f);
+            }
+            else if (parent.currentSelection == this )
             {
                 spriteBatch.Draw(Outline, Pos, null, Color.Yellow, Rotation, Origin, Scale, Effects, 0f);
             }
@@ -83,7 +87,7 @@ namespace CellED.Core
             {
                 if (parent.currentSelection != null)
                 {
-                    if (parent.currentSelection.Z > Z)
+                    if (parent.currentSelection.Z >= Z)
                     {
                         parent.currentSelection = this;
                     }
@@ -93,6 +97,11 @@ namespace CellED.Core
                     parent.currentSelection = this;
                 }
             }
+        }
+
+        public void Destroy()
+        {
+            parent.MouseLeftPressed -= OnMouseLeftPressed;
         }
 
         private bool Contains(float x, float y)

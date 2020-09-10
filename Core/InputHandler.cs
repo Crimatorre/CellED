@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +13,7 @@ namespace CellED.Core
         public KeyboardState lastKeyboardState;
 
         public delegate void MouseHandler(float x, float y);
-        public delegate void KeyTapped();
+        public delegate void KeyTapped(Keys key);
 
         public event MouseHandler LeftClickEvent;
         public event MouseHandler MouseLeftPressedEvent;
@@ -21,7 +22,7 @@ namespace CellED.Core
         public event MouseHandler MouseShiftLeftReleasedEvent;
         public event MouseHandler MouseMovedEvent;
 
-        public event KeyTapped GTappedEvent;
+        public event KeyTapped KeyTappedEvent;
 
 
         public InputHandler(CellED game)
@@ -73,11 +74,22 @@ namespace CellED.Core
             // G-key tapping
             if (IsKeyTapped(keyboardState, Keys.G))
             {
-                GTappedEvent?.Invoke();
+                KeyTappedEvent?.Invoke(Keys.G);
+            }
+
+            // ESC-key tapping
+            if (IsKeyTapped(keyboardState, Keys.Escape))
+            {
+                KeyTappedEvent?.Invoke(Keys.Escape);
             }
 
             lastMouseState = mouseState;
             lastKeyboardState = keyboardState;
+        }
+
+        public Vector2 GetMousePos()
+        {
+            return new Vector2(lastMouseState.X, lastMouseState.Y);
         }
 
         private bool IsKeyTapped(KeyboardState keyboardState, Keys key)

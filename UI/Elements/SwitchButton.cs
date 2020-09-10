@@ -46,8 +46,12 @@ namespace CellED.UI.Elements
             if (Contains(x, y))
             {
                 SwitchParameter = SwitchParameter == true ? false : true;
-                SwitchSliderPos();
             }
+        }
+
+        public void OnValueChanged(bool newValue)
+        {
+            SwitchParameter = newValue;
         }
 
         private void SwitchSliderPos()

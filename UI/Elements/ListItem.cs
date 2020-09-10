@@ -55,13 +55,13 @@ namespace CellED.UI.Elements
             State = ItemState.None;
         }
 
-        private void ConnectInput()
+        protected virtual void ConnectInput()
         {
             parentList.MouseLeftClickEvent += OnMouseLeftClick;
             parentList.MousePosChanged += OnMousePosChanged;
         }
 
-        private void DisconnectInput()
+        protected virtual void DisconnectInput()
         {
             parentList.MouseLeftClickEvent -= OnMouseLeftClick;
             parentList.MousePosChanged -= OnMousePosChanged;
@@ -79,9 +79,8 @@ namespace CellED.UI.Elements
                 if (State == ItemState.Selected)
                 {
                     // disselecting selected item
-                    parentList.CurrentSelection = null;
-                    State = ItemState.Hovered;
                     OnItemDiselection();
+                    State = ItemState.Hovered;
                 }
                 else
                 {
@@ -92,8 +91,6 @@ namespace CellED.UI.Elements
                     }
                     
                     // adding selection to new item
-                    State = ItemState.Selected;
-                    parentList.CurrentSelection = this;
                     OnItemSelection(x, y);
                 }
             }
@@ -106,12 +103,14 @@ namespace CellED.UI.Elements
 
         public virtual void OnItemSelection(float x, float y)
         {
-
+            State = ItemState.Selected;
+            parentList.CurrentSelection = this;
         }
 
         public virtual void OnItemDiselection()
         {
-            
+            State = ItemState.None;
+            parentList.CurrentSelection = null;
         }
 
         private void OnMousePosChanged(float x, float y)

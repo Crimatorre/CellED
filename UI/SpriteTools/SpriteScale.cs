@@ -14,6 +14,7 @@ namespace CellED.UI.SpriteTools
         private WorldObject selectedObject;
 
         public Slider ScaleSlider { get; private set; }
+        public Scope ScaleScope { get; private set; }
 
         public SpriteScale(SideBar sideBar) : base(sideBar, 50, "Sprite Scale")
         {
@@ -23,6 +24,10 @@ namespace CellED.UI.SpriteTools
             MouseLeftPressed += ScaleSlider.OnMouseLeftPressed;
             MouseLeftReleased += ScaleSlider.OnMouseLeftReleased;
             MouseMoved += ScaleSlider.OnMouseMoved;
+
+            ScaleScope = new Scope(this, 36, 19, Pos + new Vector2(170, 18));
+            ScaleScope.LabelText = string.Format("{0:F2}", 0.1f);
+
             ScaleSlider.ValueChanged += OnScaleValueChanged;
             parent.objectHandler.ObjectSelection += OnObjectSelection;
         }
@@ -32,10 +37,12 @@ namespace CellED.UI.SpriteTools
             selectedObject = ob;
             if (ob == null) {
                 ScaleSlider.SliderValue = ScaleSlider.SliderMinValue;
+                ScaleScope.LabelText = string.Format("{0:F2}", ScaleSlider.SliderMinValue);
             }
             else
             {
                 ScaleSlider.SliderValue = ob.Scale;
+                ScaleScope.LabelText = string.Format("{0:F2}", ob.Scale);
             }
         }
 
@@ -45,18 +52,21 @@ namespace CellED.UI.SpriteTools
             {
                 selectedObject.Scale = value;
             }
+            ScaleScope.LabelText = string.Format("{0:F2}", value);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
             ScaleSlider.Draw(spriteBatch);
+            ScaleScope.Draw(spriteBatch);
         }
 
         public override void Update()
         {
             base.Update();
             ScaleSlider.Update();
+            ScaleScope.Update();
         }
     }
 }

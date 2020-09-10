@@ -13,6 +13,9 @@ namespace CellED.Core
     {
         private float zValue;
         private bool showOnTop;
+        private bool gridEnabled;
+        private bool editModeEnabled;
+
         public enum TileOperation
         {
             None,
@@ -31,8 +34,34 @@ namespace CellED.Core
 
         public Vector2 Size { get; set; }
         public TileOperation CurrentOperation { get; set; }
-        public bool EditModeEnabled { get; set; }
-        public bool GridEnabled { get; set; }
+        public bool EditModeEnabled
+        {
+            get
+            {
+                return editModeEnabled;
+            }
+            set
+            {
+                if (gridEnabled)
+                {
+                    editModeEnabled = value;
+                    EditModeChanged?.Invoke(value);
+                }
+            }
+        }
+        public bool GridEnabled
+        {
+            get
+            {
+                return gridEnabled;
+            }
+            set
+            {
+                EditModeEnabled = false;
+                gridEnabled = value;
+                VisibilityChanged?.Invoke(value);
+            }
+        }
         public bool ShowOnTop
         {
             get
@@ -45,6 +74,12 @@ namespace CellED.Core
                 zValue = showOnTop == true ? 0f : 1f;
             }
         }
+
+        public delegate void StateEvent(bool newValue);
+        public event StateEvent ZChanged;
+        public event StateEvent EditModeChanged;
+        public event StateEvent VisibilityChanged;
+
         
         public Grid(CellED game)
         {

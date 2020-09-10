@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using System.Text;
 
 namespace CellED.Core
@@ -19,9 +21,12 @@ namespace CellED.Core
         public ObjectOperation CurrentOperation;
         public WorldObject currentSelection;
 
+        private Vector2 mousePadding;
+
         public List<WorldObject> CatalogObjects { get; set; }
         public List<WorldObject> WorldObjects { get; set; }
-        public WorldObject NewObject { get; set; }
+
+        public WorldObject newObject;
 
         public delegate void MouseEvent(float x, float y);
         public delegate void ObjectEvent(ref WorldObject ob);
@@ -34,6 +39,38 @@ namespace CellED.Core
             InitializeObjects();
             CurrentOperation = ObjectOperation.None;
             parent.inputHandler.MouseLeftPressedEvent += OnMouseLeftClick;
+            parent.inputHandler.KeyTappedEvent += OnKeyPress;
+        }
+
+        private void OnKeyPress(Keys key)
+        {
+            if (key == Keys.G)
+            {
+                MoveSelectedItem();
+            }
+            if (key == Keys.Escape)
+            {
+                if (CurrentOperation == ObjectOperation.None && currentSelection != null)
+                {
+                    currentSelection = null;
+                }
+            }
+        }
+
+        private void MoveSelectedItem()
+        {
+            if (CurrentOperation == ObjectOperation.None && currentSelection != null)
+            {
+                CurrentOperation = ObjectOperation.Placing;
+                mousePadding = (currentSelection.Pos + parent.camera.CurrentOffset) - parent.inputHandler.GetMousePos();
+                parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
+            }
+            else if (CurrentOperation == ObjectOperation.Placing && currentSelection != null)
+            {
+                currentSelection.Pos = parent.inputHandler.GetMousePos() + mousePadding - parent.camera.CurrentOffset;
+                parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
+                CurrentOperation = ObjectOperation.None;
+            }
         }
 
         private void InitializeObjects()
@@ -46,22 +83,28 @@ namespace CellED.Core
         {
             CurrentOperation = ObjectOperation.Placing;
             currentSelection = null;
-            NewObject = worldObj;
+            newObject = worldObj;
             parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
+            parent.grid.EditModeEnabled = false;
         }
 
         public void EndObjectAddition()
         {
             CurrentOperation = ObjectOperation.None;
-            NewObject = null;
+            newObject.Destroy();
+            newObject = null;
             parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
         }
 
         private void OnMousePosChanged(float x, float y)
         {
-            if (CurrentOperation == ObjectOperation.Placing)
+            if (CurrentOperation == ObjectOperation.Placing && newObject != null)
             {
-                NewObject.Pos = new Vector2(x, y) - parent.camera.CurrentOffset;
+                newObject.Pos = new Vector2(x, y) - parent.camera.CurrentOffset;
+            }
+            else if (CurrentOperation == ObjectOperation.Placing && currentSelection != null)
+            {
+                currentSelection.Pos = new Vector2(x, y) + mousePadding - parent.camera.CurrentOffset;
             }
             
         }
@@ -70,17 +113,23 @@ namespace CellED.Core
         {
             if (ViewPortContains(x, y))
             {
-                if (CurrentOperation == ObjectOperation.Placing)
+                if (CurrentOperation == ObjectOperation.Placing && newObject != null)
                 {
-                    NewObject.Pos = new Vector2(x, y) - parent.camera.CurrentOffset;
-                    WorldObjects.Add(NewObject);
-                    NewObject = new WorldObject(NewObject, NewObject.Pos);
+                    newObject.Pos = new Vector2(x, y) - parent.camera.CurrentOffset;
+                    WorldObjects.Add(newObject);
+                    newObject = new WorldObject(newObject, newObject.Pos);
                 }
                 if (CurrentOperation == ObjectOperation.None && !parent.grid.EditModeEnabled)
                 {
                     currentSelection = null;
                     MouseLeftPressed?.Invoke(x, y);
                     ObjectSelection?.Invoke(ref currentSelection);
+                }
+                if (CurrentOperation == ObjectOperation.Placing && currentSelection != null)
+                {
+                    currentSelection.Pos = new Vector2(x, y) + mousePadding - parent.camera.CurrentOffset;
+                    parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
+                    CurrentOperation = ObjectOperation.None;
                 }
             }
         }
@@ -91,9 +140,9 @@ namespace CellED.Core
             {
                 worldObj.Draw(spriteBatch);
             }
-            if (NewObject != null)
+            if (newObject != null)
             {
-                NewObject.Draw(spriteBatch);
+                newObject.Draw(spriteBatch);
             }
         }
 
