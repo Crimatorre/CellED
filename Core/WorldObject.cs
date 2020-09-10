@@ -25,7 +25,7 @@ namespace CellED.Core
 
         public WorldObject(ObjectHandler parent, Texture2D texture, string name,
             Vector2? pos = null, float scale = 0.5f, float rotation = 0f,
-            Color? color = null, SpriteEffects spriteEffects = SpriteEffects.None, float z = 0.01f)
+            Color? color = null, SpriteEffects spriteEffects = SpriteEffects.None, float z = 0.5f)
         {
             this.parent = parent;
             Texture = texture;

@@ -25,7 +25,7 @@ namespace CellED.UI.SpriteTools
             MouseLeftReleased += ScaleSlider.OnMouseLeftReleased;
             MouseMoved += ScaleSlider.OnMouseMoved;
 
-            ScaleScope = new Scope(this, 36, 19, Pos + new Vector2(170, 18));
+            ScaleScope = new Scope(this, 40, 19, Pos + new Vector2(170, 18));
             ScaleScope.LabelText = string.Format("{0:F2}", 0.1f);
 
             ScaleSlider.ValueChanged += OnScaleValueChanged;

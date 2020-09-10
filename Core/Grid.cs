@@ -46,6 +46,7 @@ namespace CellED.Core
                 {
                     editModeEnabled = value;
                     EditModeChanged?.Invoke(value);
+                    parent.objectHandler.currentSelection = null;
                 }
             }
         }
