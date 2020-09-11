@@ -30,8 +30,10 @@ namespace CellED.Core
 
         public delegate void MouseEvent(float x, float y);
         public delegate void ObjectEvent(ref WorldObject ob);
+        public delegate void UIEvent(bool newState);
         public event MouseEvent MouseLeftPressed;
         public event ObjectEvent ObjectSelection;
+        public event UIEvent InputStateChanged;
 
         public ObjectHandler(CellED parent)
         {
@@ -55,6 +57,17 @@ namespace CellED.Core
                     currentSelection = null;
                 }
             }
+            if (key == Keys.Delete)
+            {
+                if (CurrentOperation == ObjectOperation.None && currentSelection != null)
+                {
+                    Debug.WriteLine(WorldObjects.Remove(currentSelection));
+                    currentSelection.Destroy();
+                    currentSelection = null;
+                    InputStateChanged?.Invoke(true);
+                    ObjectSelection?.Invoke(ref currentSelection);
+                }
+            }
         }
 
         private void MoveSelectedItem()
@@ -64,12 +77,14 @@ namespace CellED.Core
                 CurrentOperation = ObjectOperation.Placing;
                 mousePadding = (currentSelection.Pos + parent.camera.CurrentOffset) - parent.inputHandler.GetMousePos();
                 parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
+                InputStateChanged?.Invoke(false);
             }
             else if (CurrentOperation == ObjectOperation.Placing && currentSelection != null)
             {
                 currentSelection.Pos = parent.inputHandler.GetMousePos() + mousePadding - parent.camera.CurrentOffset;
                 parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
                 CurrentOperation = ObjectOperation.None;
+                InputStateChanged?.Invoke(true);
             }
         }
 
@@ -86,6 +101,7 @@ namespace CellED.Core
             newObject = worldObj;
             parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
             parent.grid.EditModeEnabled = false;
+            InputStateChanged?.Invoke(false);
         }
 
         public void EndObjectAddition()
@@ -94,6 +110,7 @@ namespace CellED.Core
             newObject.Destroy();
             newObject = null;
             parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
+            InputStateChanged?.Invoke(true);
         }
 
         private void OnMousePosChanged(float x, float y)
@@ -124,12 +141,21 @@ namespace CellED.Core
                     currentSelection = null;
                     MouseLeftPressed?.Invoke(x, y);
                     ObjectSelection?.Invoke(ref currentSelection);
+                    if (currentSelection != null)
+                    {
+                        InputStateChanged?.Invoke(false);
+                    }
+                    else
+                    {
+                        InputStateChanged?.Invoke(true);
+                    }
                 }
                 if (CurrentOperation == ObjectOperation.Placing && currentSelection != null)
                 {
                     currentSelection.Pos = new Vector2(x, y) + mousePadding - parent.camera.CurrentOffset;
                     parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
                     CurrentOperation = ObjectOperation.None;
+                    InputStateChanged?.Invoke(true);
                 }
             }
         }

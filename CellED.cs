@@ -65,7 +65,7 @@ namespace CellED
             ScreenWidth = 1600;
             ScreenHeight = 900;
 
-            //TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d); //fps
+            TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d); //fps
 
             State = ProgramState.GridEnabled;
             Offset = Vector2.Zero;
@@ -101,7 +101,7 @@ namespace CellED
         {
             //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             //    Exit();
-
+                
             //UpdateMouseOffset();
             grid.Update();
             inputHandler.Update();
@@ -129,6 +129,11 @@ namespace CellED
             spriteBatchUI.End();
 
             base.Draw(gameTime);
+        }
+
+        public void Quit()
+        {
+            Exit();
         }
     }
 }

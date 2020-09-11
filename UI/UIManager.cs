@@ -1,4 +1,6 @@
-﻿using CellED.UI.SpriteTools;
+﻿using CellED.Core;
+using CellED.UI.SpriteTools;
+using CellED.UI.TopBarMenus;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -17,7 +19,7 @@ namespace CellED.UI
         public UIManager(CellED parent)
         {
             this.parent = parent;
-            uiObjects = new List<UIObjectBase>();
+            uiObjects = new List<UIObjectBase>(3);
             FillColor = new Color(90, 90, 90);
             InitializeUI();
         }
@@ -30,6 +32,10 @@ namespace CellED.UI
             Parameters parameters = Parameters.Filled;
 
             TopBar topBar = new TopBar(parent, parent.ScreenWidth/3, topBarHeight, new Vector2(parent.ScreenWidth/3, 0), parameters, FillColor);
+            topBar.AddButton(new FileMenu(topBar));
+            topBar.AddButton(new EditMenu(topBar));
+
+            parent.objectHandler.InputStateChanged += topBar.OnInputStateChanged;
 
             SideBar leftSideBar = new SideBar(parent, sideBarWidth, parent.ScreenHeight, Vector2.Zero, parameters, FillColor);
             leftSideBar.AddTool(new TextureCatalog(leftSideBar));
