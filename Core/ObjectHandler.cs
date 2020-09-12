@@ -20,6 +20,7 @@ namespace CellED.Core
         public CellED parent;
         public ObjectOperation CurrentOperation;
         public WorldObject currentSelection;
+        public bool inputDisabled;
 
         private Vector2 mousePadding;
 
@@ -40,8 +41,21 @@ namespace CellED.Core
             this.parent = parent;
             InitializeObjects();
             CurrentOperation = ObjectOperation.None;
+            EnableInput();
+        }
+
+        public void EnableInput()
+        {
             parent.inputHandler.MouseLeftPressedEvent += OnMouseLeftClick;
             parent.inputHandler.KeyTappedEvent += OnKeyPress;
+            inputDisabled = false;
+        }
+
+        public void DisableInput()
+        {
+            parent.inputHandler.MouseLeftPressedEvent -= OnMouseLeftClick;
+            parent.inputHandler.KeyTappedEvent -= OnKeyPress;
+            inputDisabled = true;
         }
 
         private void OnKeyPress(Keys key)
@@ -96,21 +110,27 @@ namespace CellED.Core
 
         public void StartObjectAddition(WorldObject worldObj)
         {
-            CurrentOperation = ObjectOperation.Placing;
-            currentSelection = null;
-            newObject = worldObj;
-            parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
-            parent.grid.EditModeEnabled = false;
-            InputStateChanged?.Invoke(false);
+            if (!inputDisabled)
+            {
+                CurrentOperation = ObjectOperation.Placing;
+                currentSelection = null;
+                newObject = worldObj;
+                parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
+                parent.grid.EditModeEnabled = false;
+                InputStateChanged?.Invoke(false);
+            }
         }
 
         public void EndObjectAddition()
         {
-            CurrentOperation = ObjectOperation.None;
-            newObject.Destroy();
-            newObject = null;
-            parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
-            InputStateChanged?.Invoke(true);
+            if (!inputDisabled)
+            {
+                CurrentOperation = ObjectOperation.None;
+                newObject.Destroy();
+                newObject = null;
+                parent.inputHandler.MouseMovedEvent -= OnMousePosChanged;
+                InputStateChanged?.Invoke(true);
+            }
         }
 
         private void OnMousePosChanged(float x, float y)

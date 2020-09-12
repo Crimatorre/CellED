@@ -1,4 +1,6 @@
 ﻿using CellED.Core;
+using CellED.UI.DialogWindows;
+using CellED.UI.Elements;
 using CellED.UI.SpriteTools;
 using CellED.UI.TopBarMenus;
 using Microsoft.Xna.Framework;
@@ -32,7 +34,8 @@ namespace CellED.UI
             Parameters parameters = Parameters.Filled;
 
             TopBar topBar = new TopBar(parent, parent.ScreenWidth/3, topBarHeight, new Vector2(parent.ScreenWidth/3, 0), parameters, FillColor);
-            topBar.AddButton(new FileMenu(topBar));
+            FileMenu fileMenu = new FileMenu(topBar);
+            topBar.AddButton(fileMenu);
             topBar.AddButton(new EditMenu(topBar));
 
             parent.objectHandler.InputStateChanged += topBar.OnInputStateChanged;
@@ -47,9 +50,13 @@ namespace CellED.UI
             rightSideBar.AddTool(new SpriteColorTint(rightSideBar));
             rightSideBar.AddTool(new SpriteRotation(rightSideBar));
 
+            DialogWindow saveDialog = new SaveDialog(parent, 500, 300, new Vector2(parent.ScreenWidth / 2, parent.ScreenHeight / 2));
+            fileMenu.saveButton.ButtonPressed += saveDialog.Show;
+
             uiObjects.Add(topBar);
             uiObjects.Add(leftSideBar);
             uiObjects.Add(rightSideBar);
+            uiObjects.Add(saveDialog);
         }
 
         public void Update()

@@ -46,6 +46,13 @@ namespace CellED.Core
             return colorData1D;
         }
 
+
+        public static Color[] CreateGappedRectangularBorder(int width, int height, int borderWidth, Color borderColor, Vector2 textSize)
+        {
+            Color[] colorData1D = new Color[width * height];
+            return CreateGappedRectangularBorder(colorData1D, width, height, borderWidth, borderColor, textSize);
+        }
+
         public static Color[] CreateGappedRectangularBorder(Color[] colorData1D, int width, int height, int borderWidth, Color borderColor, Vector2 textSize)
         {
             Color[,] colorData2D = ColorData1Dto2D(colorData1D, width, height);
