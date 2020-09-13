@@ -16,6 +16,7 @@ namespace CellED.UI.Elements
         }
 
         private int slot;
+        private bool isConnected;
         protected List parentList;
 
 
@@ -57,14 +58,22 @@ namespace CellED.UI.Elements
 
         protected virtual void ConnectInput()
         {
-            parentList.MouseLeftClickEvent += OnMouseLeftClick;
-            parentList.MousePosChanged += OnMousePosChanged;
+            if (!isConnected)
+            {
+                parentList.MouseLeftClickEvent += OnMouseLeftClick;
+                parentList.MousePosChanged += OnMousePosChanged;
+                isConnected = true;
+            }
         }
 
         protected virtual void DisconnectInput()
         {
-            parentList.MouseLeftClickEvent -= OnMouseLeftClick;
-            parentList.MousePosChanged -= OnMousePosChanged;
+            if (isConnected)
+            {
+                parentList.MouseLeftClickEvent -= OnMouseLeftClick;
+                parentList.MousePosChanged -= OnMousePosChanged;
+                isConnected = false;
+            }
         }
 
         private void UpdatePos()
@@ -76,6 +85,7 @@ namespace CellED.UI.Elements
         {
             if (Contains(x, y))
             {
+                Debug.WriteLine(Label);
                 if (State == ItemState.Selected)
                 {
                     // disselecting selected item

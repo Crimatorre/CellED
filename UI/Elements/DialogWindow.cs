@@ -32,7 +32,7 @@ namespace CellED.UI.Elements
             GenerateBorder(BorderWidth);
         }
 
-        public void Show()
+        public virtual void Show()
         {
             isActive = true;
             parent.inputHandler.MouseLeftPressedEvent += OnMouseLeftPressed;
@@ -65,7 +65,7 @@ namespace CellED.UI.Elements
             }
         }
 
-        public void Hide()
+        public virtual void Hide()
         {
             isActive = false;
             parent.inputHandler.MouseLeftPressedEvent -= OnMouseLeftPressed;

@@ -24,6 +24,9 @@ namespace CellED.Core
 
         public event KeyTapped KeyTappedEvent;
 
+        public event MouseHandler MouseScrollUp;
+        public event MouseHandler MouseScrollDown;
+
 
         public InputHandler(CellED game)
         {
@@ -68,6 +71,18 @@ namespace CellED.Core
             if (lastMouseState.X != mouseState.X ||
                 lastMouseState.Y != mouseState.Y)
             {
+                MouseMovedEvent?.Invoke(mouseState.X, mouseState.Y);
+            }
+
+            // MouseScroll Handling
+            if (lastMouseState.ScrollWheelValue > mouseState.ScrollWheelValue)
+            {
+                MouseScrollDown?.Invoke(mouseState.X, mouseState.Y);
+                MouseMovedEvent?.Invoke(mouseState.X, mouseState.Y);
+            }
+            if (lastMouseState.ScrollWheelValue < mouseState.ScrollWheelValue)
+            {
+                MouseScrollUp?.Invoke(mouseState.X, mouseState.Y);
                 MouseMovedEvent?.Invoke(mouseState.X, mouseState.Y);
             }
 
