@@ -14,7 +14,6 @@ namespace CellED
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private SpriteBatch spriteBatchUI;
-        private UIManager uiManager;
 
         public readonly int ScreenWidth;
         public readonly int ScreenHeight;
@@ -32,6 +31,7 @@ namespace CellED
         public Camera camera;
         public ObjectHandler objectHandler;
         public Grid grid;
+        public UIManager uiManager;
 
         public ProgramState State { get; set; }
         public Vector2 Offset { get; private set; }
@@ -88,7 +88,6 @@ namespace CellED
             UIFontSmall = Content.Load<SpriteFont>("Fonts/UIFontSmall");
 
             inputHandler = new InputHandler(this);
-
             objectHandler = new ObjectHandler(this);
 
             grid = new Grid(this);

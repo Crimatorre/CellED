@@ -22,6 +22,12 @@ namespace CellED.Core
             game.inputHandler.MouseShiftLeftReleasedEvent += OnMouseRelease;
         }
 
+        public void ResetCamera()
+        {
+            CurrentOffset = new Vector2(_game.ScreenWidth / 2, _game.ScreenHeight / 2);
+            CameraPosition = Matrix.CreateTranslation(CurrentOffset.X, CurrentOffset.Y, 0f);
+        }
+
         private void OnMousePress(float x, float y)
         {
             lastMousePos = new Vector2(x, y);

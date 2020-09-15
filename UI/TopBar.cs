@@ -73,5 +73,15 @@ namespace CellED.UI
                 tbButton.Update();
             }
         }
+
+        public bool Contains(float x, float y)
+        {
+            if (x > Pos.X && x < Pos.X + Width &&
+                y > Pos.Y && y < Pos.Y + Height)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace CellED.UI
         private List<UIObjectBase> uiObjects;
         private CellED parent;
         private Color FillColor { get; set; }
+        public TopBar TopBar { get; private set; }
         public UIManager(CellED parent)
         {
             this.parent = parent;
@@ -33,12 +34,12 @@ namespace CellED.UI
 
             Parameters parameters = Parameters.Filled;
 
-            TopBar topBar = new TopBar(parent, parent.ScreenWidth/3, topBarHeight, new Vector2(parent.ScreenWidth/3, 0), parameters, FillColor);
-            FileMenu fileMenu = new FileMenu(topBar);
-            topBar.AddButton(fileMenu);
-            topBar.AddButton(new EditMenu(topBar));
+            TopBar = new TopBar(parent, parent.ScreenWidth/3, topBarHeight, new Vector2(parent.ScreenWidth/3, 0), parameters, FillColor);
+            FileMenu fileMenu = new FileMenu(TopBar);
+            TopBar.AddButton(fileMenu);
+            TopBar.AddButton(new EditMenu(TopBar));
 
-            parent.objectHandler.InputStateChanged += topBar.OnInputStateChanged;
+            parent.objectHandler.InputStateChanged += TopBar.OnInputStateChanged;
 
             SideBar leftSideBar = new SideBar(parent, sideBarWidth, parent.ScreenHeight, Vector2.Zero, parameters, FillColor);
             leftSideBar.AddTool(new TextureCatalog(leftSideBar));
@@ -53,10 +54,14 @@ namespace CellED.UI
             DialogWindow saveDialog = new SaveDialog(parent);
             fileMenu.saveButton.ButtonPressed += saveDialog.Show;
 
-            uiObjects.Add(topBar);
+            DialogWindow loadDialog = new LoadDialog(parent);
+            fileMenu.loadButton.ButtonPressed += loadDialog.Show;
+
+            uiObjects.Add(TopBar);
             uiObjects.Add(leftSideBar);
             uiObjects.Add(rightSideBar);
             uiObjects.Add(saveDialog);
+            uiObjects.Add(loadDialog);
         }
 
         public void Update()

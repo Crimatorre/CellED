@@ -85,7 +85,6 @@ namespace CellED.UI.Elements
         {
             if (Contains(x, y))
             {
-                Debug.WriteLine(Label);
                 if (State == ItemState.Selected)
                 {
                     // disselecting selected item

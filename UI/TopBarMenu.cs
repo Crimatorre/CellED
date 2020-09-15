@@ -34,10 +34,6 @@ namespace CellED.UI
             set
             {
                 menuVisible = value;
-                if (value)
-                {
-                    // Activate input for buttons
-                }
             }
         }
 
@@ -79,21 +75,31 @@ namespace CellED.UI
             {
                 MenuVisible = MenuVisible != true;
                 Color = MenuVisible == true ? parent.SelectionColor : parent.HoverColor;
-                ConnectMenu();
+
+                if (MenuVisible)
+                {
+                    ConnectMenu();
+                }
+                else
+                {
+                    DisconnectMenu();
+                }
             }
             else if (MenuContains(x, y) && MenuVisible)
             {
-                MouseLeftPressed.Invoke(x, y);
+                parent.objectHandler.EnableInput();
+                MouseLeftPressed?.Invoke(x, y);
                 MenuVisible = false;
                 Color = parent.BaseColor;
                 DisconnectMenu();
             }
-            else
+            /*else
             {
+                Debug.WriteLine("Here");
                 MenuVisible = false;
                 Color = parent.BaseColor;
                 DisconnectMenu();
-            }
+            }*/
         }
 
         protected void ConnectMenu()
@@ -103,6 +109,7 @@ namespace CellED.UI
                 MouseMoved += button.OnMouseMoved;
                 MouseLeftPressed += button.OnMouseLeftPressed;
             }
+            parent.objectHandler.DisableInput();
         }
 
         protected void DisconnectMenu()

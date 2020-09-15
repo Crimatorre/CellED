@@ -45,8 +45,19 @@ namespace CellED.UI.Elements
             : base(parent.parent, width, height, pos, Parameters.Filled, parent.parent.BaseColorDark, null, 0)
         {
             State = ButtonState.None;
-            this.parent.inputHandler.MouseLeftPressedEvent += OnMouseLeftClickStarted;
-            this.parent.inputHandler.MouseLeftReleasedEvent += OnMouseLeftClickEnded;
+            ConnectInput();
+        }
+
+        public void ConnectInput()
+        {
+            parent.inputHandler.MouseLeftPressedEvent += OnMouseLeftClickStarted;
+            parent.inputHandler.MouseLeftReleasedEvent += OnMouseLeftClickEnded;
+        }
+
+        public void DisconnectInput()
+        {
+            parent.inputHandler.MouseLeftPressedEvent -= OnMouseLeftClickStarted;
+            parent.inputHandler.MouseLeftReleasedEvent -= OnMouseLeftClickEnded;
         }
 
         private void OnMouseLeftClickStarted(float x, float y)
@@ -54,7 +65,6 @@ namespace CellED.UI.Elements
             if (Contains(x, y))
             {
                 State = ButtonState.Clicked;
-                ButtonClicked?.Invoke();
             }
         }
 
@@ -63,6 +73,10 @@ namespace CellED.UI.Elements
             if (State == ButtonState.Clicked)
             {
                 State = ButtonState.None;
+                if (Contains(x, y))
+                {
+                    ButtonClicked?.Invoke();
+                }
             }
         }
 
@@ -83,7 +97,7 @@ namespace CellED.UI.Elements
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            spriteBatch.Draw(ButtonTexture, Pos + Vector2.One, null, ButtonColors[(int)State], 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            spriteBatch.Draw(ButtonTexture, Pos + Vector2.One, null, ButtonColors[(int)State], 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
             if (ButtonText != null)
             {

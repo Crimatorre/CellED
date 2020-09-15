@@ -22,6 +22,7 @@ namespace CellED.UI.Elements
         private LinkedList<ListItem> currentScrollItems;
         private int firstScrollIndex;
         private int lastScrollIndex;
+        private ListItem currentSelection;
 
         public List<ListItem> ListItems { get; private set; }
         public List<ListItem> CurrentListItems { get; private set; }
@@ -29,13 +30,29 @@ namespace CellED.UI.Elements
         public int CurrentPage { get; set; }
         public int ItemsPerPage { get; private set; }
         public int MaxPages { get; private set; }
-        public ListItem CurrentSelection { get; set; }
+        public ListItem CurrentSelection
+        {
+            get
+            {
+                return currentSelection;
+            }
+            set
+            {
+                currentSelection = value;
+                if (value != null)
+                {
+                    ItemSelected?.Invoke(value);
+                }
+            }
+        }
 
         public delegate void MouseEvent(float x, float y);
         public delegate void PageEvent(int page);
+        public delegate void ItemEvent(ListItem item);
         public event MouseEvent MouseLeftClickEvent;
         public event MouseEvent MousePosChanged;
         public event PageEvent PageChanged;
+        public event ItemEvent ItemSelected;
 
         public List(UIObjectBase parent, int width, int itemHeight, int itemsPerPage, Vector2 pos, Color? itemBaseColor = null, bool isScrollable = false)
             : base(parent.parent, width, (itemHeight + 1) * itemsPerPage + 1, pos, Parameters.Filled, new Color(70, 70, 70), null, 0)
@@ -150,7 +167,9 @@ namespace CellED.UI.Elements
             else
             {
                 ListItems = itemList;
-                SetupScrollableList();
+                if (ListItems != null) {
+                    SetupScrollableList();
+                }
             }
         }
 
@@ -162,7 +181,7 @@ namespace CellED.UI.Elements
             }
 
             firstScrollIndex = 0;
-            lastScrollIndex = ListItems.Count < ItemsPerPage ? ListItems.Count : ItemsPerPage - 1;
+            lastScrollIndex = ListItems.Count < ItemsPerPage ? ListItems.Count - 1 : ItemsPerPage - 1;
             currentScrollItems = new LinkedList<ListItem>();
 
             for (int i = firstScrollIndex; i <= lastScrollIndex; i++)
@@ -185,7 +204,6 @@ namespace CellED.UI.Elements
                     lastScrollIndex--;
                     currentScrollItems.AddFirst(ListItems[firstScrollIndex]);
                     int counter = 0;
-                    bool hoverCorrected = false;
 
                     foreach (ListItem item in currentScrollItems)
                     {
@@ -209,7 +227,6 @@ namespace CellED.UI.Elements
                     lastScrollIndex++;
                     currentScrollItems.AddLast(ListItems[lastScrollIndex]);
                     int counter = -1;
-                    bool hoverCorrected = false;
 
                     foreach (ListItem item in currentScrollItems)
                     {

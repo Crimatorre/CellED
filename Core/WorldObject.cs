@@ -57,7 +57,17 @@ namespace CellED.Core
             Outline = worldObject.Outline;
             ColorData = worldObject.ColorData;
 
+            ConnectInput();
+        }
+
+        public void ConnectInput()
+        {
             parent.MouseLeftPressed += OnMouseLeftPressed;
+        }
+
+        public void DisconnectInput()
+        {
+            parent.MouseLeftPressed -= OnMouseLeftPressed;
         }
 
         public void CreateOutlinedTexture()

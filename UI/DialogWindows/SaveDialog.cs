@@ -1,8 +1,10 @@
-﻿using CellED.UI.Elements;
+﻿using CellED.Core;
+using CellED.UI.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace CellED.UI.DialogWindows
@@ -14,7 +16,16 @@ namespace CellED.UI.DialogWindows
         {
             fileList = new List(this, Width - 30, 16, 10, Pos + new Vector2(15, 20), Color.Transparent, true);
             fileList.DisconnectInput();
+            fileList.ItemSelected += OnItemSelection;
             CreateFileListItems();
+        }
+
+        private void OnItemSelection(ListItem item)
+        {
+            if (!FileHandler.SaveProject(parent.objectHandler.WorldObjects, item.Label))
+            {
+                Debug.WriteLine("File alredy exists!");
+            }
         }
 
         private void CreateFileListItems()
@@ -31,8 +42,11 @@ namespace CellED.UI.DialogWindows
         {
             base.Hide();
             fileList.DisconnectInput();
-            fileList.CurrentSelection.State = ListItem.ItemState.None;
-            fileList.CurrentSelection = null;
+            if (fileList.CurrentSelection != null)
+            {
+                fileList.CurrentSelection.State = ListItem.ItemState.None;
+                fileList.CurrentSelection = null;
+            }
         }
 
         public override void Show()

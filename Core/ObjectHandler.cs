@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CellED.UI;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -23,9 +24,29 @@ namespace CellED.Core
         public bool inputDisabled;
 
         private Vector2 mousePadding;
+        private List<WorldObject> worldObjects;
 
         public List<WorldObject> CatalogObjects { get; set; }
-        public List<WorldObject> WorldObjects { get; set; }
+        public List<WorldObject> WorldObjects
+        {
+            get
+            {
+                return worldObjects;
+            }
+            set
+            {
+                if (worldObjects != null)
+                {
+                    foreach (WorldObject obj in worldObjects)
+                    {
+                        obj.Destroy();
+                    }
+                    worldObjects.Clear();
+                    worldObjects = null;
+                }
+                worldObjects = value;
+            }
+        }
 
         public WorldObject newObject;
 
@@ -69,13 +90,15 @@ namespace CellED.Core
                 if (CurrentOperation == ObjectOperation.None && currentSelection != null)
                 {
                     currentSelection = null;
+                    ObjectSelection?.Invoke(ref currentSelection);
+                    InputStateChanged?.Invoke(true);
                 }
             }
             if (key == Keys.Delete)
             {
                 if (CurrentOperation == ObjectOperation.None && currentSelection != null)
                 {
-                    Debug.WriteLine(WorldObjects.Remove(currentSelection));
+                    WorldObjects.Remove(currentSelection);
                     currentSelection.Destroy();
                     currentSelection = null;
                     InputStateChanged?.Invoke(true);
@@ -194,7 +217,8 @@ namespace CellED.Core
 
         private bool ViewPortContains(float x, float y)
         {
-            if (x > 240 && x < parent.ScreenWidth - 240)
+            TopBar tb = parent.uiManager.TopBar;
+            if (x > 240 && x < parent.ScreenWidth - 240 && !tb.Contains(x, y))
             {
                 return true;
             }
