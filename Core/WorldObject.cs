@@ -117,12 +117,28 @@ namespace CellED.Core
         private bool Contains(float x, float y)
         {
             Vector2 cameraOffset = parent.parent.camera.CurrentOffset;
-            float xScreen = Pos.X - (Origin.X * Scale) + cameraOffset.X;
-            float yScreen = Pos.Y - (Origin.Y * Scale) + cameraOffset.Y;
-            if (x > xScreen && x < xScreen + Texture.Width * Scale &&
-                y > yScreen && y < yScreen + Texture.Height * Scale)
+            
+            // Translation into textures coordinates
+            float xTexture = x - cameraOffset.X + Origin.X * Scale - Pos.X;
+            float yTexture = y - cameraOffset.Y + Origin.Y * Scale - Pos.Y;
+
+            double cos = Math.Cos(-Rotation);
+            double sin = Math.Sin(-Rotation);
+
+            // Moving origing, rotating and moving origin back
+            xTexture -= Origin.X * Scale;
+            yTexture -= Origin.Y * Scale;
+
+            double xRotated = xTexture * cos - yTexture * sin;
+            double yRotated = yTexture * cos + xTexture * sin;
+
+            xRotated += Origin.X * Scale;
+            yRotated += Origin.Y * Scale;
+
+            if (xRotated > 0 && xRotated < Texture.Width * Scale &&
+                yRotated > 0 && yRotated < Texture.Height * Scale)
             {
-                if (ColorData[(int)((x - xScreen) / Scale), (int)((y - yScreen) / Scale)] != Color.Transparent)
+                if (ColorData[(int)(xRotated / Scale), (int)(yRotated / Scale)] != Color.Transparent)
                 {
                     return true;
                 }

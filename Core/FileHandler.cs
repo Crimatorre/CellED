@@ -103,10 +103,14 @@ namespace CellED.Core
                         while ((data = reader.ReadLine()) != null)
                         {
                             string[] dataArray = data.Split(";");
-                            tasks.Add(Task.Run(() => WorldObjectFromString(dataArray, objectHandler.CatalogObjects)));
+                            if (dataArray.Length == 11)
+                            {
+                                tasks.Add(Task.Run(() => WorldObjectFromString(dataArray, objectHandler.CatalogObjects)));
+                            }
                         }
                     }
 
+                    Thread.Sleep(100);
                     Task.WaitAll(tasks.ToArray());
 
                     foreach (Task<WorldObject> task in tasks)
