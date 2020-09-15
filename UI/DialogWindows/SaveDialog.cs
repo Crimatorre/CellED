@@ -24,7 +24,14 @@ namespace CellED.UI.DialogWindows
         {
             if (!FileHandler.SaveProject(parent.objectHandler.WorldObjects, item.Label))
             {
-                Debug.WriteLine("File alredy exists!");
+                if (item.Label == parent.CurrentFile)
+                {
+                    FileHandler.SaveProject(parent.objectHandler.WorldObjects, item.Label, true);
+                }
+                else
+                {
+                    Debug.WriteLine("Do you hand to rewrite other file?");
+                }
             }
         }
 

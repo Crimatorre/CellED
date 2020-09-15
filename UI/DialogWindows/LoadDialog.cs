@@ -43,6 +43,7 @@ namespace CellED.UI.DialogWindows
             if (selectedFile != null)
             {
                 FileHandler.LoadProject(selectedFile, parent.objectHandler);
+                parent.CurrentFile = selectedFile;
                 parent.camera.ResetCamera();
                 Hide();
             }

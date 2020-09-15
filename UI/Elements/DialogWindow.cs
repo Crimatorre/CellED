@@ -71,7 +71,7 @@ namespace CellED.UI.Elements
             parent.inputHandler.MouseLeftPressedEvent -= OnMouseLeftPressed;
             parent.inputHandler.MouseMovedEvent -= OnMouseMoved;
             parent.inputHandler.KeyTappedEvent -= OnKeyPressed;
-            //parent.objectHandler.EnableInput();
+            parent.objectHandler.EnableInput();
         }
 
         public override void GenerateBorder(int borderWidth)

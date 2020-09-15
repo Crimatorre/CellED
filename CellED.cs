@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using CellED.UI;
 using System.Collections.Generic;
+using System.Dynamic;
 
 namespace CellED
 {
@@ -33,6 +34,7 @@ namespace CellED
         public Grid grid;
         public UIManager uiManager;
 
+        public string CurrentFile { get; set; }
         public ProgramState State { get; set; }
         public Vector2 Offset { get; private set; }
 
