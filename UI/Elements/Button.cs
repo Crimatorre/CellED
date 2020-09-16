@@ -9,15 +9,16 @@ namespace CellED.UI.Elements
 {
     public class Button : UIObjectBase
     {
-        enum ButtonState
+        protected enum ButtonState
         {
             None,
-            Clicked
+            Clicked,
+            Pressed
         }
 
         private string _buttonText;
 
-        private ButtonState State { get; set; }
+        protected ButtonState State { get; set; }
         private Texture2D ButtonTexture { get; set; }
         private List<Color> ButtonColors { get; set; }
 
@@ -60,7 +61,7 @@ namespace CellED.UI.Elements
             parent.inputHandler.MouseLeftReleasedEvent -= OnMouseLeftClickEnded;
         }
 
-        private void OnMouseLeftClickStarted(float x, float y)
+        protected virtual void OnMouseLeftClickStarted(float x, float y)
         {
             if (Contains(x, y))
             {
@@ -68,16 +69,22 @@ namespace CellED.UI.Elements
             }
         }
 
-        private void OnMouseLeftClickEnded(float x, float y)
+        protected virtual void OnMouseLeftClickEnded(float x, float y)
         {
             if (State == ButtonState.Clicked)
             {
                 State = ButtonState.None;
                 if (Contains(x, y))
                 {
+                    OnClickEnded(x, y);
                     ButtonClicked?.Invoke();
                 }
             }
+        }
+
+        protected virtual void OnClickEnded(float x, float y)
+        {
+
         }
 
         public override void GenerateTexture()
@@ -89,9 +96,10 @@ namespace CellED.UI.Elements
             ButtonTexture = new Texture2D(parent.GraphicsDevice, buttonWidth, buttonHeight);
             ButtonTexture.SetData(Utilities.CreateRectangleTexture(buttonWidth * buttonHeight));
 
-            ButtonColors = new List<Color>(2);
+            ButtonColors = new List<Color>(3);
             ButtonColors.Add(parent.BaseColor);
             ButtonColors.Add(parent.HoverColor);
+            ButtonColors.Add(parent.SelectionColor);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -110,7 +118,7 @@ namespace CellED.UI.Elements
             base.Update();
         }
 
-        private bool Contains(float x, float y)
+        protected bool Contains(float x, float y)
         {
             if (x > Pos.X && x < Pos.X + Width &&
                 y > Pos.Y && y < Pos.Y + Height)

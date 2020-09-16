@@ -135,6 +135,15 @@ namespace CellED.Core
             xRotated += Origin.X * Scale;
             yRotated += Origin.Y * Scale;
 
+            if (Effects.HasFlag(SpriteEffects.FlipVertically))
+            {
+                yRotated = Texture.Height * Scale - yRotated;
+            }
+            if (Effects.HasFlag(SpriteEffects.FlipHorizontally))
+            {
+                xRotated = Texture.Width * Scale - xRotated;
+            }
+
             if (xRotated > 0 && xRotated < Texture.Width * Scale &&
                 yRotated > 0 && yRotated < Texture.Height * Scale)
             {

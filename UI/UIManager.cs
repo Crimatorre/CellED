@@ -50,6 +50,7 @@ namespace CellED.UI
             rightSideBar.AddTool(new SpriteZValue(rightSideBar));
             rightSideBar.AddTool(new SpriteColorTint(rightSideBar));
             rightSideBar.AddTool(new SpriteRotation(rightSideBar));
+            rightSideBar.AddTool(new SpriteFlip(rightSideBar));
 
             DialogWindow saveDialog = new SaveDialog(parent);
             fileMenu.saveButton.ButtonPressed += saveDialog.Show;

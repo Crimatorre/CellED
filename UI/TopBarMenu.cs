@@ -83,6 +83,7 @@ namespace CellED.UI
                 else
                 {
                     DisconnectMenu();
+                    parent.objectHandler.EnableInput();
                 }
             }
             else if (MenuContains(x, y) && MenuVisible)
