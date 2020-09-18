@@ -122,7 +122,7 @@ namespace CellED.UI.Elements
             parentList.CurrentSelection = null;
         }
 
-        private void OnMousePosChanged(float x, float y)
+        public virtual void OnMousePosChanged(float x, float y)
         {
             if (State != ItemState.Selected)
             {

@@ -14,7 +14,7 @@ namespace CellED.Core
 {
     public static class FileHandler
     {
-        public static List<WorldObject> WorldObjectsFromTextures(ObjectHandler objectHandler, GraphicsDevice graphicsDevice, string pathToFolder)
+        public static List<(Texture2D, string)> WorldObjectsFromTextures(ObjectHandler objectHandler, GraphicsDevice graphicsDevice, string pathToFolder)
         {
             if (Directory.Exists(pathToFolder))
             {
@@ -23,13 +23,14 @@ namespace CellED.Core
                 FileInfo[] files = di.GetFiles("*.png");
 
                 FileStream fStream;
-                List<WorldObject> worldObjects = new List<WorldObject>();
+                List<(Texture2D, string)> worldObjects = new List<(Texture2D, string)>();
 
                 foreach (FileInfo file in files)
                 {
-                    fStream = new FileStream(pathToFolder + "/" + file.Name, FileMode.Open);
-                    Texture2D texture = Texture2D.FromStream(graphicsDevice, fStream);
-                    worldObjects.Add(new WorldObject(objectHandler, texture, Path.GetFileNameWithoutExtension(file.Name)));
+                    fStream = new FileStream(string.Format("{0}/{1}", pathToFolder, file.Name), FileMode.Open);
+                    worldObjects.Add(
+                        (PremultiplyAlpha(Texture2D.FromStream(graphicsDevice, fStream)), Path.GetFileNameWithoutExtension(file.Name))
+                    );
                     fStream.Dispose();
                 }
 
@@ -105,7 +106,7 @@ namespace CellED.Core
                             string[] dataArray = data.Split(";");
                             if (dataArray.Length == 11)
                             {
-                                tasks.Add(Task.Run(() => WorldObjectFromString(dataArray, objectHandler.CatalogObjects)));
+                                tasks.Add(Task.Run(() => WorldObjectFromString(dataArray, objectHandler)));
                             }
                         }
                     }
@@ -125,14 +126,15 @@ namespace CellED.Core
             return false;
         }
 
-        public static WorldObject WorldObjectFromString(string[] dataArray, List<WorldObject> catalog)
+        public static WorldObject WorldObjectFromString(string[] dataArray, ObjectHandler objectHandler)
         {
             
             
             string name = dataArray[0];
             Vector2 pos = new Vector2(float.Parse(dataArray[1]), float.Parse(dataArray[2]));
+            (Texture2D, string) catalogItem = objectHandler.CatalogObjects.Find(obj => obj.Item2 == name);
 
-            WorldObject newObject = new WorldObject(catalog.Find(obj => obj.Name == name), pos)
+            WorldObject newObject = new WorldObject(objectHandler, catalogItem.Item1, catalogItem.Item2, pos)
             {
                 Scale = float.Parse(dataArray[3]),
                 Rotation = float.Parse(dataArray[4]),
@@ -142,6 +144,40 @@ namespace CellED.Core
             };
 
             return newObject;
+        }
+
+        private static byte ApplyAlpha(byte color, byte alpha)
+        {
+            var fc = color / 255.0f;
+            var fa = alpha / 255.0f;
+            var fr = (int)(255.0f * fc * fa);
+            if (fr < 0)
+            {
+                fr = 0;
+            }
+            if (fr > 255)
+            {
+                fr = 255;
+            }
+            return (byte)fr;
+        }
+
+        public static Texture2D PremultiplyAlpha(Texture2D texture)
+        {
+            Color[] data = new Color[texture.Width * texture.Height];
+            texture.GetData(data);
+
+            for (int i = 0; i < data.Length; ++i)
+            {
+                byte a = data[i].A;
+
+                data[i].R = ApplyAlpha(data[i].R, a);
+                data[i].G = ApplyAlpha(data[i].G, a);
+                data[i].B = ApplyAlpha(data[i].B, a);
+            }
+
+            texture.SetData(data);
+            return texture;
         }
     }
 }

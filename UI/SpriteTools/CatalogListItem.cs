@@ -1,27 +1,38 @@
 ﻿using CellED.Core;
 using CellED.UI.Elements;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CellED.UI.SpriteTools
 {
     public class CatalogListItem : ListItem
     {
-        WorldObject WorldObj { get; set; }
-        public CatalogListItem(List parent, WorldObject worldObj) : base(parent, worldObj.Name)
+        WorldObject worldObject;
+        Texture2D objectTexture;
+        string objectName;
+
+        public CatalogListItem(List parent, Texture2D texture, string name) : base(parent, name)
         {
-            WorldObj = worldObj;
+            objectTexture = texture;
+            objectName = name;
         }
 
         public override void OnItemSelection(float x, float y)
         {
             base.OnItemSelection(x, y);
-            parentList.parent.objectHandler.StartObjectAddition(new WorldObject(WorldObj, new Vector2(x, y) - parentList.parent.camera.CurrentOffset));
+            if (worldObject == null)
+            {
+                LoadReferenceObject();
+                Label = string.Format("*{0}", objectName);
+            }
+            parentList.parent.objectHandler.StartObjectAddition(new WorldObject(worldObject, new Vector2(x, y) - parentList.parent.camera.CurrentOffset));
         }
 
         public override void OnItemDiselection()
@@ -51,6 +62,12 @@ namespace CellED.UI.SpriteTools
                     OnItemDiselection();
                 }
             }
+        }
+
+        public void LoadReferenceObject()
+        {
+            worldObject = new WorldObject(parentList.parent.objectHandler, objectTexture, objectName);
+            worldObject.DisconnectInput();
         }
     }
 }

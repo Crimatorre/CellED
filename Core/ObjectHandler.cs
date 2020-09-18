@@ -26,7 +26,7 @@ namespace CellED.Core
         private Vector2 mousePadding;
         private List<WorldObject> worldObjects;
 
-        public List<WorldObject> CatalogObjects { get; set; }
+        public List<(Texture2D, string)> CatalogObjects { get; set; }
         public List<WorldObject> WorldObjects
         {
             get

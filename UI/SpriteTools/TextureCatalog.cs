@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CellED.UI.SpriteTools
 {
@@ -48,13 +49,13 @@ namespace CellED.UI.SpriteTools
 
         private void CreateCatalogItems()
         {
-            List<WorldObject> catalogObjects = parent.objectHandler.CatalogObjects;
+            List<(Texture2D, string)> catalogObjects = parent.objectHandler.CatalogObjects;
 
             List<ListItem> itemList = new List<ListItem>();
             
-            foreach (WorldObject worldObj in catalogObjects)
+            foreach (var catalogItem in catalogObjects)
             {
-                CatalogListItem item = new CatalogListItem(CatalogList, worldObj);
+                CatalogListItem item = new CatalogListItem(CatalogList, catalogItem.Item1, catalogItem.Item2);
                 itemList.Add(item);
             }
 
