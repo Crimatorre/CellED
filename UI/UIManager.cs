@@ -58,11 +58,15 @@ namespace CellED.UI
             DialogWindow loadDialog = new LoadDialog(parent);
             fileMenu.loadButton.ButtonPressed += loadDialog.Show;
 
+            DialogWindow newProjectDialog = new NewDialog(parent);
+            fileMenu.newProjectButton.ButtonPressed += newProjectDialog.Show;
+
             uiObjects.Add(TopBar);
             uiObjects.Add(leftSideBar);
             uiObjects.Add(rightSideBar);
             uiObjects.Add(saveDialog);
             uiObjects.Add(loadDialog);
+            uiObjects.Add(newProjectDialog);
         }
 
         public void Update()

@@ -104,6 +104,11 @@ namespace CellED.Core
                 KeyTappedEvent?.Invoke(Keys.Delete);
             }
 
+            if (IsKeyTapped(keyboardState, Keys.D))
+            {
+                KeyTappedEvent.Invoke(Keys.D);
+            }
+
             lastMouseState = mouseState;
             lastKeyboardState = keyboardState;
         }

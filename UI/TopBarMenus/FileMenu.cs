@@ -20,7 +20,6 @@ namespace CellED.UI.TopBarMenus
             loadButton = new TopBarMenuButton(this, "Load Project");
             exitButton = new TopBarMenuButton(this, "Exit");
 
-            newProjectButton.ButtonPressed += CreateProject;
             exitButton.ButtonPressed += ExitProgram;
 
             AddMenuButton(newProjectButton);
@@ -32,11 +31,6 @@ namespace CellED.UI.TopBarMenus
         private void ExitProgram()
         {
             parent.Quit();
-        }
-
-        private void CreateProject()
-        {
-            Debug.WriteLine("Create Project not implemented yet.");
         }
     }
 }

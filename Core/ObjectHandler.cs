@@ -105,6 +105,23 @@ namespace CellED.Core
                     ObjectSelection?.Invoke(ref currentSelection);
                 }
             }
+            if (key == Keys.D)
+            {
+                if (CurrentOperation == ObjectOperation.None && currentSelection != null)
+                {
+                    DuplicateObject();
+                }
+            }
+        }
+
+        private void DuplicateObject()
+        {
+            currentSelection = new WorldObject(currentSelection, parent.inputHandler.GetMousePos() + mousePadding - parent.camera.CurrentOffset);
+            WorldObjects.Add(currentSelection);
+            CurrentOperation = ObjectOperation.Placing;
+            parent.inputHandler.MouseMovedEvent += OnMousePosChanged;
+            InputStateChanged?.Invoke(false);
+            ObjectSelection?.Invoke(ref currentSelection);
         }
 
         private void MoveSelectedItem()
