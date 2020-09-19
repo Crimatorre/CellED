@@ -54,6 +54,9 @@ namespace CellED.UI.Elements
             }
         }
 
+        public delegate void TextInputEvent(string text);
+        public event TextInputEvent TextChanged;
+
         public TextInput(UIObjectBase parent, int width, Vector2 pos)
             : base(parent.parent, width, 25, pos, Parameters.Filled, parent.parent.BaseColorDark, null, 1)
         {
@@ -97,6 +100,7 @@ namespace CellED.UI.Elements
                         text = text.Remove(text.Length - 1);
                     }
                 }
+                TextChanged?.Invoke(text);
             }
         }
 

@@ -95,6 +95,8 @@ namespace CellED
             grid = new Grid(this);
             camera = new Camera(this);
             uiManager = new UIManager(this);
+
+            CurrentFile = "";
         }
 
         protected override void Update(GameTime gameTime)

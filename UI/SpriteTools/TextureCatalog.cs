@@ -49,14 +49,13 @@ namespace CellED.UI.SpriteTools
 
         private void CreateCatalogItems()
         {
-            List<(Texture2D, string)> catalogObjects = parent.objectHandler.CatalogObjects;
+            List<WorldObject> catalogObjects = parent.objectHandler.CatalogObjects;
 
             List<ListItem> itemList = new List<ListItem>();
             
             foreach (var catalogItem in catalogObjects)
             {
-                CatalogListItem item = new CatalogListItem(CatalogList, catalogItem.Item1, catalogItem.Item2);
-                itemList.Add(item);
+                itemList.Add(new CatalogListItem(CatalogList, catalogItem.Texture, catalogItem.Name));
             }
 
             CatalogList.SetItemList(itemList);

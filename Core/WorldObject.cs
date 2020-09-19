@@ -37,9 +37,9 @@ namespace CellED.Core
             Color = color ?? Color.White;
             Effects = spriteEffects;
             Z = z;
+            Outline = new Texture2D(parent.parent.GraphicsDevice, texture.Width, texture.Height);
 
             CreateOutlinedTexture();
-            ConnectInput();
         }
 
         public WorldObject(WorldObject worldObject, Vector2 pos)
@@ -72,11 +72,10 @@ namespace CellED.Core
 
         public void CreateOutlinedTexture()
         {
-            Outline = new Texture2D(parent.parent.GraphicsDevice, Texture.Width, Texture.Height);
             Color[] colorData = new Color[Texture.Width * Texture.Height];
             Texture.GetData(colorData);
             ColorData = Utilities.ColorData1Dto2D(colorData, Texture.Width, Texture.Height);
-            Outline.SetData(Utilities.CreateOutlineTexture(colorData, Texture.Width, Texture.Height, 5));
+            //Outline.SetData(Utilities.CreateOutlineTexture(colorData, Texture.Width, Texture.Height, 5));
         }
 
         public void Draw(SpriteBatch spriteBatch)
