@@ -10,10 +10,10 @@ namespace CellED.Core
     public class WorldObject
     {
         public ObjectHandler parent;
+        public Texture2D outline;
 
         public string Name { get; set; }
         public Texture2D Texture { get; set; }
-        public Texture2D Outline { get; set; }
         public Vector2 Pos { get; set; }
         public Vector2 Origin { get; set; }
         public SpriteEffects Effects { get; set; }
@@ -21,7 +21,7 @@ namespace CellED.Core
         public float Rotation { get; set; }
         public float Z { get; set; }
         public Color Color { get; set; }
-        public Color[,] ColorData { get; set; }
+        public byte[,] ColorData { get; set; }
 
         public WorldObject(ObjectHandler parent, Texture2D texture, string name,
             Vector2? pos = null, float scale = 0.5f, float rotation = 0f,
@@ -37,7 +37,6 @@ namespace CellED.Core
             Color = color ?? Color.White;
             Effects = spriteEffects;
             Z = z;
-            Outline = new Texture2D(parent.parent.GraphicsDevice, texture.Width, texture.Height);
 
             CreateOutlinedTexture();
         }
@@ -54,7 +53,7 @@ namespace CellED.Core
             Color = worldObject.Color;
             Effects = worldObject.Effects;
             Z = worldObject.Z;
-            Outline = worldObject.Outline;
+            outline = worldObject.outline;
             ColorData = worldObject.ColorData;
 
             ConnectInput();
@@ -74,8 +73,14 @@ namespace CellED.Core
         {
             Color[] colorData = new Color[Texture.Width * Texture.Height];
             Texture.GetData(colorData);
-            ColorData = Utilities.ColorData1Dto2D(colorData, Texture.Width, Texture.Height);
-            //Outline.SetData(Utilities.CreateOutlineTexture(colorData, Texture.Width, Texture.Height, 5));
+            ColorData = Utilities.ColorDatato2DByteData(colorData, Texture.Width, Texture.Height);
+            if (!FileHandler.LoadFromPng(parent.parent.GraphicsDevice, out outline, Name))
+            {
+                outline = new Texture2D(parent.parent.GraphicsDevice, Texture.Width, Texture.Height);
+                outline.SetData(Utilities.CreateOutlineTexture(ColorData, Texture.Width, Texture.Height, 5));
+                FileHandler.SaveAsPng(outline, Name);
+                Debug.WriteLine("Generated outline for: " + Name);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -83,11 +88,11 @@ namespace CellED.Core
             spriteBatch.Draw(Texture, Pos, null, Color, Rotation, Origin, Scale, Effects, Z);
             if (parent.currentSelection == this && parent.CurrentOperation == ObjectHandler.ObjectOperation.Placing)
             {
-                spriteBatch.Draw(Outline, Pos, null, Color.Orange, Rotation, Origin, Scale, Effects, 0f);
+                spriteBatch.Draw(outline, Pos, null, Color.Orange, Rotation, Origin, Scale, Effects, 0f);
             }
             else if (parent.currentSelection == this )
             {
-                spriteBatch.Draw(Outline, Pos, null, Color.Yellow, Rotation, Origin, Scale, Effects, 0f);
+                spriteBatch.Draw(outline, Pos, null, Color.Yellow, Rotation, Origin, Scale, Effects, 0f);
             }
         }
 
@@ -147,7 +152,7 @@ namespace CellED.Core
             if (xRotated > 0 && xRotated < Texture.Width * Scale &&
                 yRotated > 0 && yRotated < Texture.Height * Scale)
             {
-                if (ColorData[(int)(xRotated / Scale), (int)(yRotated / Scale)] != Color.Transparent)
+                if (ColorData[(int)(xRotated / Scale), (int)(yRotated / Scale)] != 0)
                 {
                     return true;
                 }

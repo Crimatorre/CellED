@@ -183,7 +183,7 @@ namespace CellED.Core
             {
                 currentSelection.Pos = new Vector2(x, y) + mousePadding - parent.camera.CurrentOffset;
             }
-            
+
         }
 
         private void OnMouseLeftClick(float x, float y)

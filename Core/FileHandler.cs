@@ -29,6 +29,7 @@ namespace CellED.Core
                 {
                     fStream = new FileStream(pathToFolder + "/" + file.Name, FileMode.Open);
                     Texture2D texture = Texture2D.FromStream(graphicsDevice, fStream);
+                    PremultiplyAlpha(texture);
                     worldObjects.Add(new WorldObject(objectHandler, texture, Path.GetFileNameWithoutExtension(file.Name)));
                     fStream.Dispose();
                 }
@@ -86,6 +87,41 @@ namespace CellED.Core
             return true;
         }
 
+        internal static bool LoadFromPng(GraphicsDevice graphicsDevice, out Texture2D texture, string fileName)
+        {
+            string pathToDirectory = "Content/Textures/Outlined";
+            Directory.CreateDirectory(pathToDirectory);
+
+            if (!File.Exists(string.Format("{0}/{1}.png", pathToDirectory, fileName)))
+            {
+                texture = null;
+                return false;
+            }
+
+            FileStream fStream = new FileStream(string.Format("{0}/{1}.png", pathToDirectory, fileName), FileMode.Open);
+            texture = Texture2D.FromStream(graphicsDevice, fStream);
+            fStream.Dispose();
+            return true;
+        }
+
+        internal static bool SaveAsPng(Texture2D texture, string fileName)
+        {
+            string pathToDirectory = "Content/Textures/Outlined";
+            Directory.CreateDirectory(pathToDirectory);
+
+            if (File.Exists(string.Format("{0}/{1}.png", pathToDirectory, fileName)))
+            {
+                return false;
+            }
+
+            Stream stream = File.Create(string.Format("{0}/{1}.png", pathToDirectory, fileName));
+            texture.SaveAsPng(stream, texture.Width, texture.Height);
+            stream.Dispose();
+            texture.Dispose();
+
+            return true;
+        }
+
         public static bool LoadProject(string fileName, ObjectHandler objectHandler)
         {
             string pathToDirectory = "Projects";
@@ -140,5 +176,40 @@ namespace CellED.Core
 
             return newObject;
         }
+
+        private static byte ApplyAlpha(byte color, byte alpha)
+        {
+            var fc = color / 255.0f;
+            var fa = alpha / 255.0f;
+            var fr = (int)(255.0f * fc * fa);
+            if (fr < 0)
+            {
+                fr = 0;
+            }
+            if (fr > 255)
+            {
+                fr = 255;
+            }
+            return (byte)fr;
+        }
+
+        public static void PremultiplyAlpha(Texture2D texture)
+        {
+            Color[] data = new Color[texture.Width * texture.Height];
+            texture.GetData(data);
+
+            for (int i = 0; i < data.Length; ++i)
+            {
+                byte a = data[i].A;
+
+                data[i].R = ApplyAlpha(data[i].R, a);
+                data[i].G = ApplyAlpha(data[i].G, a);
+                data[i].B = ApplyAlpha(data[i].B, a);
+            }
+
+            texture.SetData(data);
+        }
     }
 }
+
+

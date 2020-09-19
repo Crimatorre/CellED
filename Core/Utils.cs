@@ -84,6 +84,26 @@ namespace CellED.Core
             return ColorData2Dto1D(colorData2D, width, height); ;
         }
 
+        internal static byte[,] ColorDatato2DByteData(Color[] colorData, int width, int height)
+        {
+            byte[,] byteData2D = new byte[width, height];
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (colorData[x + y * width] == Color.Transparent)
+                    {
+                        byteData2D[x, y] = 0;
+                    }
+                    else
+                    {
+                        byteData2D[x, y] = 1;
+                    }
+                }
+            }
+            return byteData2D;
+        }
+
         public static Color[] CreateOutlineTexture(Color[] colorData, int width, int height, int borderWidth)
         {
             Color[,] colorData2D = ColorData1Dto2D(colorData, width, height);
@@ -113,6 +133,55 @@ namespace CellED.Core
             CutDataFromOther(ref outlinedData, colorData2D, width, height);
 
             return ColorData2Dto1D(outlinedData, width, height);
+        }
+
+        public static Color[] CreateOutlineTexture(byte[,] colorData, int width, int height, int borderWidth)
+        {
+            Color[] outlineColorData = new Color[width * height];
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (colorData[x, y] != 0)
+                    {
+                        for (int u = -borderWidth; u <= borderWidth; u++)
+                        {
+                            for (int v = -borderWidth; v <= borderWidth; v++)
+                            {
+                                if (u + x >= 0 && u + x < width &&
+                                    v + y >= 0 && v + y < height &&
+                                    colorData[x + u, y + v] != 1)
+                                {
+                                    outlineColorData[(x + u) + (y + v) * width] = Color.White;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return outlineColorData;
+        }
+
+        private static Color[] ByteDataToColorData(byte[,] outlineData, int width, int height)
+        {
+            Color[] colorData1D = new Color[width * height];
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (outlineData[x, y] != 0)
+                    {
+                        colorData1D[x + y * width] = Color.White;
+                    }
+                    else
+                    {
+                        colorData1D[x + y * width] = Color.Transparent;
+                    }
+                }
+            }
+            return colorData1D;
         }
 
         private static void CutDataFromOther(ref Color[,] outlinedData, Color[,] colorData2D, int width, int height)
