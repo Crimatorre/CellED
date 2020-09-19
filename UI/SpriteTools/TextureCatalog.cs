@@ -55,7 +55,7 @@ namespace CellED.UI.SpriteTools
             
             foreach (var catalogItem in catalogObjects)
             {
-                itemList.Add(new CatalogListItem(CatalogList, catalogItem.Texture, catalogItem.Name));
+                itemList.Add(new CatalogListItem(CatalogList, catalogItem));
             }
 
             CatalogList.SetItemList(itemList);

@@ -42,6 +42,13 @@ namespace CellED.UI.DialogWindows
         {
             if (selectedFile != null)
             {
+                DateTime now = DateTime.Now;
+                if (parent.CurrentFile == "" && parent.objectHandler.WorldObjects.Count > 0)
+                {
+                    parent.CurrentFile = string.Format("unnamed-{0}{1}{2}{3}{4}", now.Day, now.Month, now.Year, now.Hour, now.Minute);
+                    FileHandler.SaveProject(parent.objectHandler.WorldObjects, parent.CurrentFile);
+                }
+
                 FileHandler.LoadProject(selectedFile, parent.objectHandler);
                 parent.CurrentFile = selectedFile;
                 parent.camera.ResetCamera();
@@ -78,6 +85,7 @@ namespace CellED.UI.DialogWindows
             fileList.ConnectInput();
             loadButton.ConnectInput();
             cancelButton.ConnectInput();
+            CreateFileListItems();
         }
 
         public override void Draw(SpriteBatch spriteBatch)

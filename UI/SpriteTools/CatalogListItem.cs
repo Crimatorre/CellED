@@ -15,23 +15,15 @@ namespace CellED.UI.SpriteTools
     public class CatalogListItem : ListItem
     {
         WorldObject worldObject;
-        Texture2D objectTexture;
-        string objectName;
 
-        public CatalogListItem(List parent, Texture2D texture, string name) : base(parent, name)
+        public CatalogListItem(List parent, WorldObject worldObject) : base(parent, worldObject.Name)
         {
-            objectTexture = texture;
-            objectName = name;
+            this.worldObject = worldObject;
         }
 
         public override void OnItemSelection(float x, float y)
         {
             base.OnItemSelection(x, y);
-            if (worldObject == null)
-            {
-                LoadReferenceObject();
-                Label = string.Format("*{0}", objectName);
-            }
             parentList.parent.objectHandler.StartObjectAddition(new WorldObject(worldObject, new Vector2(x, y) - parentList.parent.camera.CurrentOffset));
         }
 
@@ -62,12 +54,6 @@ namespace CellED.UI.SpriteTools
                     OnItemDiselection();
                 }
             }
-        }
-
-        public void LoadReferenceObject()
-        {
-            worldObject = new WorldObject(parentList.parent.objectHandler, objectTexture, objectName);
-            worldObject.DisconnectInput();
         }
     }
 }

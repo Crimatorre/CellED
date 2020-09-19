@@ -12,13 +12,14 @@ namespace CellED.UI.Elements
 {
     public class TextInput : UIObjectBase
     {
-        private string text;
         private string separator;
         private bool separatorVisible;
         private int separatorTime;
         private readonly Vector2 textOffset;
         private bool isSelected;
         private Texture2D borderTexture;
+
+        public string Text { get; set; }
 
         public bool IsSelected
         {
@@ -61,6 +62,7 @@ namespace CellED.UI.Elements
             : base(parent.parent, width, 25, pos, Parameters.Filled, parent.parent.BaseColorDark, null, 1)
         {
             textOffset = new Vector2(4, 5);
+            Text = "";
             GenerateBorder(1);
         }
 
@@ -91,23 +93,26 @@ namespace CellED.UI.Elements
                 char ch = e.Character;
                 if (parent.UIFontSmall.Characters.Contains(ch))
                 {
-                    text += ch;
+                    if (parent.UIFontSmall.MeasureString(Text).X < Width - textOffset.X * 3)
+                    {
+                        Text += ch;
+                    }
                 }
                 else if (e.Key == Keys.Back)
                 {
-                    if (text.Length > 0)
+                    if (Text.Length > 0)
                     {
-                        text = text.Remove(text.Length - 1);
+                        Text = Text.Remove(Text.Length - 1);
                     }
                 }
-                TextChanged?.Invoke(text);
+                TextChanged?.Invoke(Text);
             }
         }
 
         public void DisconnectInput()
         {
-            parent.Window.TextInput += OnTextInput;
-            parent.inputHandler.MouseLeftPressedEvent += OnMouseClick;
+            parent.Window.TextInput -= OnTextInput;
+            parent.inputHandler.MouseLeftPressedEvent -= OnMouseClick;
             isSelected = false;
             separatorTime = 0;
         }
@@ -122,7 +127,7 @@ namespace CellED.UI.Elements
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            spriteBatch.DrawString(parent.UIFontSmall, string.Format("{0}{1}", text, separator), Pos + textOffset, parent.TextColor);
+            spriteBatch.DrawString(parent.UIFontSmall, string.Format("{0}{1}", Text, separator), Pos + textOffset, parent.TextColor);
             if (isSelected)
             {
                 spriteBatch.Draw(borderTexture, Pos, BorderColor);

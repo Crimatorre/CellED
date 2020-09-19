@@ -15,7 +15,7 @@ namespace CellED.UI.DialogWindows
         private Button cancelButton;
         private Button createButton;
         private bool showWarning;
-        private string warningMessage = "Do you intend to overwrite?";
+        private string warningMessage;
         private Vector2 warningOffset;
 
 
@@ -46,6 +46,7 @@ namespace CellED.UI.DialogWindows
             if (text == parent.CurrentFile && text != "")
             {
                 showWarning = true;
+                warningMessage = "Do you intend to overwrite?";
             }
             else
             {
@@ -69,6 +70,7 @@ namespace CellED.UI.DialogWindows
                     FileHandler.LoadProject(".template", parent.objectHandler);
                     parent.CurrentFile = ProjectName;
                     FileHandler.SaveProject(parent.objectHandler.WorldObjects, parent.CurrentFile);
+                    Hide();
                 }
             }
         }
@@ -102,6 +104,12 @@ namespace CellED.UI.DialogWindows
             cancelButton.ConnectInput();
             createButton.ConnectInput();
             textInput.ConnectInput();
+
+            if (parent.CurrentFile == "" && parent.objectHandler.WorldObjects.Count > 0)
+            {
+                showWarning = true;
+                warningMessage = "You have unsaved progress.";
+            }
         }
 
         public override void Update()
