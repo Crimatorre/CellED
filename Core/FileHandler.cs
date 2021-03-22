@@ -55,7 +55,10 @@ namespace CellED.Core
 
                 foreach (FileInfo file in files)
                 {
-                    listItems.Add(new ListItem(parent, Path.GetFileNameWithoutExtension(file.Name)));
+                    if (file.Name != ".template.prj")
+                    {
+                        listItems.Add(new ListItem(parent, Path.GetFileNameWithoutExtension(file.Name)));
+                    }
                 }
 
                 return listItems;
@@ -117,7 +120,6 @@ namespace CellED.Core
             Stream stream = File.Create(string.Format("{0}/{1}.png", pathToDirectory, fileName));
             texture.SaveAsPng(stream, texture.Width, texture.Height);
             stream.Dispose();
-            texture.Dispose();
 
             return true;
         }

@@ -27,6 +27,7 @@ namespace CellED.Core
         private Texture2D _tileFilledTexture;
         private Texture2D _tileDottedTexture;
         private Dictionary<(int, int),Tile> _tileList;
+        private Color tileColor;
         public CellED parent;
 
         public Vector2 tileSize;
@@ -193,12 +194,18 @@ namespace CellED.Core
                 {
                     Tile tile = pair.Value;
                     Vector2 tilePos = IsoToCartesian(new Vector2(tile.Pos.X, tile.Pos.Y));
-                    Texture2D tileTexture = _tileTexture;
+                    Texture2D tileTexture;
                     if (tile.currentState == Tile.State.Border)
                     {
-                        tileTexture = _tileDottedTexture;
+                        tileTexture = _tileFilledTexture;
+                        tileColor = Color.Purple;
                     }
-                    spriteBatch.Draw(tileTexture, tilePos, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, zValue);
+                    else
+                    {
+                        tileTexture = _tileTexture;
+                        tileColor = Color.White;
+                    }
+                    spriteBatch.Draw(tileTexture, tilePos, null, tileColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, zValue);
                 }
             }
         }

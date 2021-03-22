@@ -12,6 +12,9 @@ namespace CellED.Core
         public ObjectHandler parent;
         public Texture2D outline;
 
+        private int outlineBorderWidth = 6;
+        private Vector2 outlineOffset = Vector2.One*6;
+
         public string Name { get; set; }
         public Texture2D Texture { get; set; }
         public Vector2 Pos { get; set; }
@@ -76,8 +79,8 @@ namespace CellED.Core
             ColorData = Utilities.ColorDatato2DByteData(colorData, Texture.Width, Texture.Height);
             if (!FileHandler.LoadFromPng(parent.parent.GraphicsDevice, out outline, Name))
             {
-                outline = new Texture2D(parent.parent.GraphicsDevice, Texture.Width, Texture.Height);
-                outline.SetData(Utilities.CreateOutlineTexture(ColorData, Texture.Width, Texture.Height, 5));
+                outline = new Texture2D(parent.parent.GraphicsDevice, Texture.Width + 2 * outlineBorderWidth, Texture.Height + 2 * outlineBorderWidth);
+                outline.SetData(Utilities.CreateOutlineTexture(ColorData, Texture.Width, Texture.Height, outlineBorderWidth));
                 FileHandler.SaveAsPng(outline, Name);
                 Debug.WriteLine("Generated outline for: " + Name);
             }
@@ -88,11 +91,11 @@ namespace CellED.Core
             spriteBatch.Draw(Texture, Pos, null, Color, Rotation, Origin, Scale, Effects, Z);
             if (parent.currentSelection == this && parent.CurrentOperation == ObjectHandler.ObjectOperation.Placing)
             {
-                spriteBatch.Draw(outline, Pos, null, Color.Orange, Rotation, Origin, Scale, Effects, 0f);
+                spriteBatch.Draw(outline, Pos, null, Color.Orange, Rotation, Origin + outlineOffset, Scale, Effects, 0f);
             }
             else if (parent.currentSelection == this )
             {
-                spriteBatch.Draw(outline, Pos, null, Color.Yellow, Rotation, Origin, Scale, Effects, 0f);
+                spriteBatch.Draw(outline, Pos, null, Color.Yellow, Rotation, Origin + outlineOffset, Scale, Effects, 0f);
             }
         }
 

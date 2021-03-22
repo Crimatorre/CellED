@@ -60,6 +60,7 @@ namespace CellED.UI.Elements
             ItemSize = new Vector2(width - 2, itemHeight);
             ListItems = new List<ListItem>();
             CurrentListItems = new List<ListItem>();
+            currentScrollItems = new LinkedList<ListItem>();
             parentObject = parent;
             itemTextOffset = new Vector2(3, ItemSize.Y / 2 - (int)this.parent.UIFontSmall.MeasureString("Item").Y / 2);
 

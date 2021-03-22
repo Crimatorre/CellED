@@ -7,6 +7,7 @@ using System.Diagnostics;
 using CellED.UI;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 
 namespace CellED
 {
@@ -33,6 +34,9 @@ namespace CellED
         public ObjectHandler objectHandler;
         public Grid grid;
         public UIManager uiManager;
+
+        public readonly string ProjectPath = "Projects";
+        public readonly string TexturePath = "Content/Textures";
 
         public string CurrentFile { get; set; }
         public ProgramState State { get; set; }
@@ -80,6 +84,16 @@ namespace CellED
             graphics.PreferredBackBufferWidth = ScreenWidth;
             graphics.PreferredBackBufferHeight = ScreenHeight;
             graphics.ApplyChanges();
+
+            Directory.CreateDirectory(ProjectPath);
+            Directory.CreateDirectory(TexturePath);
+            string template = string.Format("{0}/.template.prj", ProjectPath);
+
+            if (!File.Exists(template))
+            {
+                File.Create(template);
+                File.SetAttributes(template, FileAttributes.Hidden);
+            }
         }
 
         protected override void LoadContent()

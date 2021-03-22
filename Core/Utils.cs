@@ -91,7 +91,7 @@ namespace CellED.Core
             {
                 for (int y = 0; y < height; y++)
                 {
-                    if (colorData[x + y * width] == Color.Transparent)
+                    if (colorData[x + y * width].A < 255 / 2)
                     {
                         byteData2D[x, y] = 0;
                     }
@@ -135,9 +135,10 @@ namespace CellED.Core
             return ColorData2Dto1D(outlinedData, width, height);
         }
 
+        // Revisit algorithm, that creates a bit bigger data than original and creates outline
         public static Color[] CreateOutlineTexture(byte[,] colorData, int width, int height, int borderWidth)
         {
-            Color[] outlineColorData = new Color[width * height];
+            Color[] outlineColorData = new Color[(width + borderWidth * 2) * (height + borderWidth * 2)];
 
             for (int x = 0; x < width; x++)
             {
@@ -149,11 +150,17 @@ namespace CellED.Core
                         {
                             for (int v = -borderWidth; v <= borderWidth; v++)
                             {
-                                if (u + x >= 0 && u + x < width &&
-                                    v + y >= 0 && v + y < height &&
-                                    colorData[x + u, y + v] != 1)
+                                if (u + x + borderWidth >= 0 && u + x + borderWidth < width + borderWidth * 2 &&
+                                    v + y + borderWidth >= 0 && v + y + borderWidth < height + borderWidth * 2)
                                 {
-                                    outlineColorData[(x + u) + (y + v) * width] = Color.White;
+                                    if (x + u >= width || y + v >= height || x + u <= 0 || y + v <= 0)
+                                    {
+                                        outlineColorData[(x + u + borderWidth) + (y + v + borderWidth) * (width + borderWidth * 2)] = Color.White;
+                                    }
+                                    else if (colorData[x + u, y + v] != 1)
+                                    {
+                                        outlineColorData[(x + u + borderWidth) + (y + v + borderWidth) * (width + borderWidth * 2)] = Color.White;
+                                    }
                                 }
                             }
                         }
